@@ -1,0 +1,21 @@
+{
+  "name": "tbvranking",
+  "version": "1.0.0",
+  "description": "",
+  "main": "fetcher.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bulma": "^0.7.1",
+    "express": "^4.16.3",
+    "fs": "0.0.1-security",
+    "jsdom": "^11.12.0",
+    "mkdirp": "^0.5.1",
+    "nedb": "^1.8.0",
+    "request": "^2.87.0",
+    "request-promise-native": "^1.0.5"
+  }
+}

@@ -1,0 +1,176 @@
+const jsdom = require('jsdom');
+const fs = require("fs");
+const nedb = require("nedb");
+
+const edb = new nedb({filename: "events.db", autoload: true});
+const pdb = new nedb({filename: "players.db", autoload: true});
+const { JSDOM } = jsdom;
+
+var directory = "./cache/events/";
+var players = {}
+
+fs.readdir("./cache/events/", (err, files) => {
+	files.forEach(file => {
+		
+		console.log("Adding event to database: "+file)
+		const event_id = Number(file);
+
+		var record = CreateEventFromIndexDOM(event_id);
+		var starting_rankings = GetPlayerInfoFromGroupsDOM(event_id);
+
+		for (let dom_group of GetGroupsFromResultsDOM(event_id))
+			record.groups.push(CreateGroupFromDOM(dom_group, starting_rankings, record));
+		
+		edb.update({id: event_id}, record, {upsert: true}, (error, replaced) => {
+			if (error)
+				console.log(error);
+		});
+	});
+
+	for (player of Object.keys(players)) {
+		pdb.update(
+			{name: player},
+			{name: player,
+			events: players[player]},
+			{upsert: true},
+			(error, replaced) => {
+			if (error)
+				console.log(error);
+		});
+	}
+});
+
+function CreateGroupFromDOM(dom_group, starting_rankings, event) {
+
+	let group = {
+		players: [],
+		games: []
+	}
+
+	for (let dom_player of dom_group) {
+		
+		var player = CreatePlayerObject(dom_player, starting_rankings);
+		group.players.push(player);
+
+		// Saving round scores from first player perspective 1-4, 1-3, 1-2
+		if (player.start_position == 1) {
+			
+			group.games = GetGamesFromPlayerDOM(dom_player);
+		}
+
+		//what = player.name.replace(/[^\w\s]/gi, '')
+		//if (what.indexOf(".") !== -1)
+		//	console.log(what)
+
+		if (!players[player.name])
+			players[player.name] = {}
+		players[player.name][event.id] = {
+			points: Number(player.score).toFixed(0),
+			event_score: player.event_score,
+			date: event.date,
+			season: event.tags[1]
+		}
+	}
+
+	return group;
+}
+
+function CreatePlayerObject( dom_player, starting_rankings ) {
+
+	const name = dom_player.querySelector(".username").innerHTML
+
+	return {
+		name: name,
+		score: dom_player.querySelector(".views-field-deltapoints").innerHTML.trim(),
+		event_score: dom_player.querySelector(".views-field-score").innerHTML.trim(),
+		rank_new: Number(dom_player.querySelector(".views-field-ranking").innerHTML),
+		rank_old: starting_rankings[name].old_rank,
+		start_position: starting_rankings[name].start_position
+	}
+}
+
+function GetGamesFromPlayerDOM(dom_player) {
+	return [
+		dom_player.querySelector(".views-field-game1").innerHTML.trim(),
+		dom_player.querySelector(".views-field-game2").innerHTML.trim(),
+		dom_player.querySelector(".views-field-game3").innerHTML.trim()
+	];
+}
+
+function CreateEventFromIndexDOM(event_id) {
+	
+	var index_file = fs.readFileSync(directory + event_id +"/index")
+	const doc_index = (new JSDOM(index_file)).window.document;
+	
+	var record = {
+		id: event_id,
+		groups: [],
+		date: doc_index.querySelector(".date-display-single").innerHTML,
+		tags: []
+	};
+
+	record.date = (new Date(Date.parse(record.date.slice(0, -8)))).toLocaleDateString('fi-FI')
+
+	for (let tag of (doc_index.querySelectorAll(".field-type-taxonomy-term-reference > div > div > a"))) {
+		record.tags.push(tag.innerHTML)
+	}
+
+	return record;
+}
+
+function GetGroupsFromResultsDOM(event_id) {
+
+	var results_file = fs.readFileSync(directory + event_id +"/results")
+	const doc_results = (new JSDOM(results_file)).window.document;
+
+	let result_table = doc_results.querySelector(".views-table")
+	let dom_groups = []
+
+	for (let dom_group of result_table.querySelectorAll("tr")) {
+
+		let group_number = Number(dom_group.querySelector(".views-field-gid").innerHTML)
+		
+		if (isNaN(group_number))
+			continue;
+
+		group_number -= 1
+
+		if (!dom_groups[group_number])
+			dom_groups[group_number] = []
+
+		dom_groups[group_number].push(dom_group);
+	}
+
+	return dom_groups;
+}
+
+
+function GetPlayerInfoFromGroupsDOM(event_id) {
+
+	var group_file = fs.readFileSync(directory + event_id +"/groups")
+	const doc_groups = (new JSDOM(group_file)).window.document;
+
+	let old_rankings = []
+	
+	let table = doc_groups.querySelector(".view-content")
+	let start_position = 1
+
+	for (let each of table.querySelectorAll("tr")) {
+
+		let player_name = each.querySelector(".username");
+		
+		if (player_name) {
+			old_rankings[player_name.innerHTML] = {
+				old_rank: Number(each.querySelector(".views-field-ranking").innerHTML.trim()),
+				start_position: start_position
+			}
+
+			start_position++
+
+			if (start_position > 4)
+				start_position = 1;
+		}
+	}
+
+	return old_rankings
+}
