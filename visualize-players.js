@@ -62,7 +62,7 @@ function GenerateHTML(player) {
 	
 	//let rarr = "";
 	//let rerr = "";
-	let lul = {};
+	let season_data = {};
 	var i=0
 	let dates = []
 	let events = []
@@ -72,10 +72,10 @@ function GenerateHTML(player) {
 		
 		let event = player.events[eventname];
 
-		if (!lul[event.season])
-			lul[event.season] = ""
+		if (!season_data[event.season])
+			season_data[event.season] = ""
 
-		lul[event.season] += "{x: "+(i++)+", y:"+event.event_score+"},"
+		season_data[event.season] += "{x: "+(i++)+", y:"+event.event_score+"},"
 		dates.push(event.date)
 		events.push(eventname)
 		points.push(event.points)
@@ -97,23 +97,22 @@ function GenerateHTML(player) {
 		//previous_group = group;
 	}
 
-	let label = Object.entries(lul)[0][1];
-	let dataset = ""
+	var colors = ["red", "blue", "orange", "green", "purple", "yellow"]
+	let label = "",
+		dataset = "",
+		k = 0;
 
-	if (Object.entries(lul)[1]) {
-		dataset = `
-		,{
-			label: '`+Object.entries(lul)[1][0]+`',
-			backgroundColor: window.chartColors.blue,
-			borderColor: window.chartColors.blue,
-			data: [
-				`+Object.entries(lul)[1][1]+`
-			],
+	for (season of Object.entries(season_data)) {
+		dataset += `{
+			label: '${season[0]}',
+			backgroundColor: '${colors[k]}',
+			borderColor: '${colors[k++]}',
+			data: [${season[1]}],
 			fill: false,
 			showLine: true,
-		}`
+		},`
 
-		label += Object.entries(lul)[1][1]
+		label += season[1]
 	}
 
 	content_elem.innerHTML += `<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
@@ -164,17 +163,8 @@ Chart.canvasHelpers.clipArea = function(ctx, clipArea) {
 		var config = {
 			type: 'scatter',
 			data: {
-				labels: 'Lul dataset',
-				datasets: [{
-					label: '`+Object.entries(lul)[0][0]+`',
-					backgroundColor: window.chartColors.red,
-					borderColor: window.chartColors.red,
-					data: [
-						`+Object.entries(lul)[0][1]+`
-					],
-					fill: false,
-					showLine: true,
-				}`+dataset+`]
+				labels: 'Seasons',
+				datasets: [`+dataset+`]
 			},
 			options: {
 				responsive: true,
