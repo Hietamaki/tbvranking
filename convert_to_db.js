@@ -61,6 +61,10 @@ function CreateGroupFromDOM(dom_group, starting_rankings, event) {
 		//what = player.name.replace(/[^\w\s]/gi, '')
 		//if (what.indexOf(".") !== -1)
 		//	console.log(what)
+		var season;
+		for (tag of event.tags)
+			if (tag.match(/^\d{4}-\w$/))
+				season = tag;
 
 		if (!players[player.name])
 			players[player.name] = {}
@@ -68,7 +72,7 @@ function CreateGroupFromDOM(dom_group, starting_rankings, event) {
 			points: Number(player.score).toFixed(0),
 			event_score: player.event_score,
 			date: event.date,
-			season: event.tags[1]
+			season
 		}
 	}
 
@@ -101,11 +105,12 @@ function CreateEventFromIndexDOM(event_id) {
 	
 	var index_file = fs.readFileSync(directory + event_id +"/index")
 	const doc_index = (new JSDOM(index_file)).window.document;
-	
+	const dateHtml = doc_index.querySelector(".date-display-single").innerHTML;
+
 	var record = {
 		id: event_id,
 		groups: [],
-		date: doc_index.querySelector(".date-display-single").innerHTML,
+		date: dateHtml.substring(0, dateHtml.indexOf("-")),
 		tags: []
 	};
 

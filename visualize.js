@@ -48,11 +48,14 @@ db.find({}, function(err, events) {
 function ListEventsBySeries(events) {
 
 	for (event of events) {
-		
-		if (!events_by_series[event.tags[1]])
-			events_by_series[event.tags[1]] = [];
-		
-		events_by_series[event.tags[1]].push([event.id, event.date]);
+		for (tag of event.tags) {
+			if (!tag.match(/^\d{4}-\w$/))
+				continue;
+			if (!events_by_series[tag])
+				events_by_series[tag] = [];
+			
+			events_by_series[tag].push([event.id, event.date]);
+		}
 	}
 }
 
@@ -328,7 +331,7 @@ function DrawSerieDropdown(type) {
 	menubutton.setAttribute("onclick", "openMenu('"+type+"')")
 	menubutton.classList.add("dropbtn")
 
-	if (type == event.tags[1])
+	if (event.tags.includes(type))
 		menubutton.classList.add("dropbtnactive");
 
 	menubutton.innerHTML = type

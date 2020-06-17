@@ -11,8 +11,7 @@ if (!Number(events[0])) {
 }
 
 for (event of events) {
-
-	mkdirp("cache/events/"+event);
+	const directory = "cache/events/"+event;
 	const event_id = Number(event);
 
 	console.log("Fetching event: "+base_url+event_id)
@@ -23,9 +22,10 @@ for (event of events) {
 
 	Promise.all([site_root, site_groups, site_results]).then(function(body) {
 			
-			const stream_root = fs.createWriteStream("cache/events/"+event_id+"/index");
-			const stream_groups = fs.createWriteStream("cache/events/"+event_id+"/groups");
-			const stream_results = fs.createWriteStream("cache/events/"+event_id+"/results");
+			mkdirp(directory);
+			const stream_root = fs.createWriteStream(directory+"/index");
+			const stream_groups = fs.createWriteStream(directory+"/groups");
+			const stream_results = fs.createWriteStream(directory+"/results");
 			
 			stream_root.once("open", function(fd) {
 				stream_root.end(body[0]);
@@ -41,7 +41,6 @@ for (event of events) {
 
 		})
 		.catch(function(error) {
-			console.log("Error: "+error);
-			process.exit();
+			console.log("No content for event "+event_id);
 		});
 }
