@@ -114,7 +114,7 @@ function CreateEventFromIndexDOM(event_id) {
 		tags: []
 	};
 
-	record.date = (new Date(Date.parse(record.date.slice(0, -8)))).toLocaleDateString('fi-FI')
+	record.date = (new Date(Date.parse(record.date))).toLocaleDateString('fi-FI')
 
 	for (let tag of (doc_index.querySelectorAll(".field-type-taxonomy-term-reference > div > div > a"))) {
 		record.tags.push(tag.innerHTML)
