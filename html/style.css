@@ -36,6 +36,7 @@ h2 {
 }
 .old {
 	color: gray;
+	text-decoration: line-through;
 }
 .new {
 	color: blue;

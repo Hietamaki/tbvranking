@@ -1,7 +1,0 @@
-#crontab lines
-#14,29,44,59 21-23 * * 3 ~/tbv/autoupdate >> ~/tbv-auto-updater
-#0 10,12 * * 4 ~/tbv/autoupdate-nextday >> ~/tbv-auto-updater
-
-cd ~/tbv
-node fetch_event_ids.js
-./update $(< new_events.dat)
