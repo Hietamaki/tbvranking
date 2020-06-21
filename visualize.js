@@ -79,7 +79,7 @@ function GenerateHTML(event) {
 		group_elem.innerHTML = "<h2>Lohkon "+(lohko++)+" tulokset</h2>"
 
 		//group_elem.appendChild(DrawPositionScores(group, previous_group))
-		group_elem.appendChild(DrawScoreTable(group))
+		group_elem.appendChild(DrawScoreTable(group, event.date))
 		group_elem.appendChild(DrawRoundsBox(group))
 		content_elem.appendChild(group_elem)
 
@@ -223,7 +223,7 @@ function CreateCol(classname) {
 	return col;
 }
 
-function DrawScoreTable(group) {
+function DrawScoreTable(group, date) {
 	
 	let table = document.createElement("table")
 	table.appendChild(CreateCol("position"));
@@ -243,7 +243,7 @@ function DrawScoreTable(group) {
 		row.appendChild(DrawPositionCell(competitor, position_state))
 		row.appendChild(DrawNameCell(competitor))
 		row.appendChild(DrawPointsCell(competitor))
-		row.appendChild(DrawRankingCell(competitor))
+		row.appendChild(DrawRankingCell(competitor, date))
 
 		table.appendChild(row)
 	}
@@ -283,13 +283,13 @@ function DrawPointsCell(competitor) {
 	return cell_points;
 }
 
-function DrawRankingCell(competitor) {
+function DrawRankingCell(competitor, date) {
 
 	let cell_ranking = document.createElement("td");
 
 	let formula_explanation = "Lohkosijoitus ("
-			+ (competitor.event_score - competitor.score * 0.045).toFixed(2)
-			+ ") + eräpistekerroin (" + (competitor.score * 0.045).toFixed(2) + ")";
+			+ (competitor.event_score - competitor.score * getBallScore(date)).toFixed(2)
+			+ ") + eräpistekerroin (" + (competitor.score * getBallScore(date)).toFixed(2) + ")";
 
 			if (competitor.event_score == 22)
 				formula_explanation = "Maksimipisteet saavutettu < 22"
@@ -319,6 +319,13 @@ function DrawRankingCell(competitor) {
 	cell_ranking.addEventListener("mouseover", hovering)
 
 	return cell_ranking;
+}
+
+function getBallScore(date) {
+	if (date.split(".")[2] >= 2020)
+		return 0.05;
+	else
+		return 0.045;
 }
 
 function DrawSerieDropdown(type) {
