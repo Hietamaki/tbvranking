@@ -12,7 +12,6 @@ var players = {}
 fs.readdir("./cache/events/", (err, files) => {
 	files.forEach(file => {
 		
-		console.log("Adding event to database: "+file)
 		const event_id = Number(file);
 
 		var record = CreateEventFromIndexDOM(event_id);
@@ -21,10 +20,14 @@ fs.readdir("./cache/events/", (err, files) => {
 		for (let dom_group of GetGroupsFromResultsDOM(event_id))
 			record.groups.push(CreateGroupFromDOM(dom_group, starting_rankings, record));
 		
-		edb.update({id: event_id}, record, {upsert: true}, (error, replaced) => {
-			if (error)
-				console.log(error);
-		});
+		if (record.groups.some(group => group.games.some(game => game !== ""))) {
+			console.log("Adding event to database: "+file)
+
+			edb.update({id: event_id}, record, {upsert: true}, (error, replaced) => {
+				if (error)
+					console.log(error);
+			});
+		}
 	});
 
 	for (player of Object.keys(players)) {
