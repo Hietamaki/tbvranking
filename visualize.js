@@ -67,23 +67,18 @@ function GenerateHTML(event) {
 	let content_elem = DrawContentDiv()
 	document.body.appendChild(content_elem)
 
-	//let previous_group = []
 	let lohko = 1
 
 	for (let group of event.groups) {
 		if (!group)
 			continue;
 
-		//console.log(group)
 		let group_elem = document.createElement("div")
 		group_elem.innerHTML = "<h2>Lohkon "+(lohko++)+" tulokset</h2>"
 
-		//group_elem.appendChild(DrawPositionScores(group, previous_group))
 		group_elem.appendChild(DrawScoreTable(group, event.date))
 		group_elem.appendChild(DrawRoundsBox(group))
 		content_elem.appendChild(group_elem)
-
-		//previous_group = group;
 	}
 
 	return new_dom.serialize();
@@ -111,95 +106,36 @@ function DrawContentDiv() {
 }
 
 function StylizeName(name) {
-	return `<span class="name">${name}</span>`
+
+	return name ? `<span class="name">${name}</span>` : "<i>täytepelaaja</i>";
 }
 
 function hovering(ev) {
 	console.log(ev.target)
 }
 
-function ListPlayersInWinningOrder(group) {
-
-	let players = []
-
-	for (let competitor of group.players)
-		players[competitor.start_position] = competitor.name;
-
-	return players
-}
-
-function DrawPositionScores(group, previous_group) {
-
-	//calculus
-
-	starting_scores = [];
-	for (competitor of group.players) {
-		if (competitor.rank_old)
-			starting_scores.push((competitor.rank_old / 2).toFixed(2));
-	}
-
-	if (starting_scores.length < 4) {
-		starting_scores.splice(starting_scores.indexOf(Math.min(...starting_scores).toFixed(2)), 1);
-
-		let previous_scores = [];
-
-		for (hmmm of previous_group.players)
-			previous_scores.push(hmmm.rank_old/2)
-
-		previous_scores.sort(function(a, b) {
-  			return a - b;
-		});
-
-		starting_scores.push(previous_scores[0]).toFixed(2)
-
-		if (starting_scores.length <2) {
-			starting_scores.push(previous_scores[1]).toFixed(2)
-		}
-	}
-
-	max = Math.max(...starting_scores).toFixed(2);
-	min = Math.min(...starting_scores).toFixed(2);
-
-	//layout
-	var text = document.createElement("div");
-	text.innerHTML = "Jaossa olevat sijoituspisteet ovat "+max +" – "+min
-
-	return text;
-}
-
 function DrawRoundsBox(group) {
 
-	var players = ListPlayersInWinningOrder(group);
+	function GetWinners(round, partnerOfFirst) {
+		
+		const winners = group.games[round-1] > 0
+			? [1, partnerOfFirst]
+			: [2, 3, 4].filter(player => player !== partnerOfFirst);
 
-	function HigherWinnerFirst(p1, p2) {
+		const [p1, p2] = group.players
+			.filter(p => winners.includes(p.start_position))
+			.sort((p1, p2) => (p2.score) - (p1.score));
 
-		if (!p2)
-			if (!p1)
-				return "<i>täytepelaaja</i> & <i>täytepelaaja</i>"
-			else
-				return StylizeName(p1) + " & <i>täytepelaaja</i>"
-
-		if (Number((group.players.find(who => who.name == p1)).score) >
-			Number((group.players.find(who => who.name == p2)).score))
-			return StylizeName(p1) + " & " + StylizeName(p2)
-		else
-			return StylizeName(p2) + " & " + StylizeName(p1)
+		return StylizeName(p1 ? p1.name : null) + " & " 
+			 + StylizeName(p2 ? p2.name : null);
 	}
 
-	function MatchString(round, p) {
-		if (group.games[round-1] > 0) {
-			return "<tr><td>Erän "+round+". voittajat:</td><td> "
-				+ HigherWinnerFirst(players[1], players[p])
-				+`</td><td><span class="points">+${group.games[round-1]}</span></td></tr>`;
-		}
-		else {
-			let others = [2, 3, 4]
-			others = others.filter(item => item !== p)
-			return "<tr><td>Erän "+round+". voittajat:</td><td> "
-				+ HigherWinnerFirst(players[others[0]], players[others[1]])
-				+"</td><td><span class='points'>+"+Math.abs(group.games[round-1])
-				+"</span></td></tr>";
-		}
+	function MatchString(round, partnerOfFirst) {
+
+		return `<tr><td>${round}. erän voittajat:</td>`
+			+ `<td> ${GetWinners(round, partnerOfFirst)}</td> `
+			+ `<td><span class='points'>+${Math.abs(group.games[round-1])}`
+			+ "</span></td></tr>";
 	}
 
 	let box = document.createElement("div")
@@ -207,7 +143,6 @@ function DrawRoundsBox(group) {
 
 	let rounds_table = document.createElement("table")
 	rounds_table.classList.add("roundscores")
-	
 	rounds_table.innerHTML	= MatchString(1, 4)
 							+ MatchString(2, 3)
 							+ MatchString(3, 2);
