@@ -2,14 +2,14 @@ const jsdom = require('jsdom');
 const fs = require("fs");
 const nedb = require("nedb");
 
-const edb = new nedb({filename: "events.db", autoload: true});
-const pdb = new nedb({filename: "players.db", autoload: true});
+const edb = new nedb({filename: "db/events.db", autoload: true});
+const pdb = new nedb({filename: "db/players.db", autoload: true});
 const { JSDOM } = jsdom;
 
-var directory = "./cache/events/";
+var directory = "cache/events/";
 var players = {}
 
-fs.readdir("./cache/events/", (err, files) => {
+fs.readdir("cache/events/", (err, files) => {
 	files.forEach(file => {
 		
 		const event_id = Number(file);

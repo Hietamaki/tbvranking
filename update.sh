@@ -10,9 +10,9 @@ if [ $1 ]; then
 fi
 
 #rm events.db
-node convert_to_db.js
-node visualize.js
-node visualize-players.js
+node src/convert_to_db.js
+node src/visualize.js
+node src/visualize-players.js
 rm html/index.html
 cp `ls html/*.html | tail -n 1` html/index.html
 cp -r html/* ../www/tbv/

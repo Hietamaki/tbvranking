@@ -1,45 +1,20 @@
-const jsdom = require('jsdom');
 const fs = require("fs");
+const { JSDOM } = require('jsdom');
 const nedb = require("nedb");
+const { GetHeaders } = require("./visualize/headers");
 
-const db = new nedb({filename: "events.db", autoload: true});
-const pdb = new nedb({filename: "players.db", autoload: true});
-const { JSDOM } = jsdom;
+const db = new nedb({filename: "db/events.db", autoload: true});
+const pdb = new nedb({filename: "db/players.db", autoload: true});
 
 // tällä pästään käsiksi documentin metodeihin missä instanssilla ei oikeasti ole väliä
 var document;
-
-var events_by_series = {};
-
-var html_doc_header= "<!DOCTYPE html><head><meta charset='utf-8'><meta name='viewport'\
- content='width=device-width, initial-scale=1'><title>TBV tulospalvelu</title>\
- <link rel='stylesheet' href='../style.css'><script src='../client.js'></script>\
- <script src='Chart.bundle.min.js'></script>\
- <script src='utils.js'></script>"+ `
-</head>
-<!-- Matomo -->
-<script type="text/javascript">
-  var _paq = _paq || [];
-  /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
-  _paq.push(['trackPageView']);
-  _paq.push(['enableLinkTracking']);
-  (function() {
-    var u="//sake.kapsi.fi/anal/";
-    _paq.push(['setTrackerUrl', u+'piwik.php']);
-    _paq.push(['setSiteId', '2']);
-    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
-    g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
-  })();
-</script>
-<!-- End Matomo Code -->
-`;
 
 pdb.find({}, function(err, players) {
 
 	for (player of players) {
 		console.log("Visualizing player: "+player.name)
 
-		fs.writeFile("./html/p/"+player.name+".html", GenerateHTML(player), (err) => {
+		fs.writeFile("html/p/"+player.name+".html", GenerateHTML(player), (err) => {
 		    if (err)
 		    	console.log(err);
 		});
@@ -49,7 +24,7 @@ pdb.find({}, function(err, players) {
 
 function GenerateHTML(player) {
 
-	var new_dom = (new JSDOM(html_doc_header));
+	var new_dom = (new JSDOM(GetHeaders(player.name, true)));
 	document = new_dom.window.document;
 	
 	let content_elem = DrawContentDiv()
@@ -244,12 +219,6 @@ function DrawContentDiv() {
 	let upperbox = document.createElement("div")
 	upperbox.id = "upperbox"
 	content.appendChild(upperbox)
-/*
-	upperbox.innerHTML = "<span class='guide'>VALITSE KISATAPAHTUMA:</span><br>";
-
-	for (page of Object.keys(events_by_series).sort().reverse())
-		upperbox.appendChild(DrawSerieDropdown(page))
-*/
 	let title = document.createElement("h1")
 	
 	title.innerHTML = player.name
