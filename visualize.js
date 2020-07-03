@@ -107,46 +107,46 @@ function DrawContentDiv() {
 
 function StylizeName(name) {
 
-	return name ? `<span class="name">${name}</span>` : "<i>täytepelaaja</i>";
-}
-
-function hovering(ev) {
-	console.log(ev.target)
+	return name ? `<span class="name">${name}</span>` : "<i>lisävahvistus</i>";
 }
 
 function DrawRoundsBox(group) {
 
-	function GetWinners(round, partnerOfFirst) {
-		
-		const winners = group.games[round-1] > 0
-			? [1, partnerOfFirst]
-			: [2, 3, 4].filter(player => player !== partnerOfFirst);
+	function CreateRoundRow(round) {
 
-		const [p1, p2] = group.players
-			.filter(p => winners.includes(p.start_position))
-			.sort((p1, p2) => (p2.score) - (p1.score));
-
-		return StylizeName(p1 ? p1.name : null) + " & " 
-			 + StylizeName(p2 ? p2.name : null);
-	}
-
-	function MatchString(round, partnerOfFirst) {
+		const [winner1, winner2] = GetWinners(round);
 
 		return `<tr><td>${round}. erän voittajat:</td>`
-			+ `<td> ${GetWinners(round, partnerOfFirst)}</td> `
+			+ `<td>${StylizeName(winner1)} & ${StylizeName(winner2)}</td>`
 			+ `<td><span class='points'>+${Math.abs(group.games[round-1])}`
 			+ "</span></td></tr>";
 	}
 
-	let box = document.createElement("div")
-	box.classList.add("games")
+	function GetWinners(round) {
 
-	let rounds_table = document.createElement("table")
+		// Player who starts at position 1 plays first with player who starts
+		// at 4th, then 3rd and last 2nd position
+		const partnerOfFirst = 5 - round;
+		
+		// group.rounds_scores are from first player perspective
+		const winners = group.games[round-1] > 0
+			? [1, partnerOfFirst]
+			: [2, 3, 4].filter(player => player !== partnerOfFirst);
+
+		return group.players
+			.filter(p => winners.includes(p.start_position))
+			.sort((p1, p2) => (p2.score) - (p1.score))
+			.map(p => p.name);
+	}
+
+	const rounds_table = document.createElement("table")
 	rounds_table.classList.add("roundscores")
-	rounds_table.innerHTML	= MatchString(1, 4)
-							+ MatchString(2, 3)
-							+ MatchString(3, 2);
-
+	rounds_table.innerHTML	= CreateRoundRow(1)
+							+ CreateRoundRow(2)
+							+ CreateRoundRow(3);
+	
+	const box = document.createElement("div")
+	box.classList.add("games")
 	box.appendChild(rounds_table)
 
 	return box;
@@ -254,6 +254,11 @@ function DrawRankingCell(competitor, date) {
 	cell_ranking.addEventListener("mouseover", hovering)
 
 	return cell_ranking;
+}
+
+
+function hovering(ev) {
+	console.log(ev.target)
 }
 
 function getBallScore(date) {
