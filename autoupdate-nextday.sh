@@ -1,3 +1,3 @@
 #!/bin/bash
 cd ~/tbvranking
-./update.sh $(< new_events.dat) 
+./src/update.sh $(< cache/new_events.dat) 

@@ -20,7 +20,7 @@ request(base_url).then(function(fetched) {
 			events += link.href.substr(6) + " "
 	}
 
-	fs.writeFile("./new_events.dat", events.trim(), (err) => {
+	fs.writeFile("cache/new_events.dat", events.trim(), (err) => {
 	    if (err)
 	    	console.log(err);
 	});

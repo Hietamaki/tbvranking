@@ -6,7 +6,7 @@ date
 
 if [ $1 ]; then
 	echo \# Fetching event $@ from tbv.fi
-	node fetcher.js $@
+	node src/fetcher.js $@
 fi
 
 #rm events.db
