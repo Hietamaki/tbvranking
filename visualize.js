@@ -105,45 +105,50 @@ function DrawContentDiv() {
 	return content;
 }
 
-function StylizeName(name) {
+function StylizePlayerName(name) {
 
 	return name ? `<span class="name">${name}</span>` : "<i>lisävahvistus</i>";
 }
 
 function DrawRoundsBox(group) {
 
-	function CreateRoundRow(round) {
+	function CreateRoundRow(group, round) {
 
-		const [winner1, winner2] = GetWinners(round);
+		//scoreboard is anchored to first in group's perspective
+		const anchor_score = group.games[round - 1];
+
+		const winners_positions = CalculateWinnersPositions(anchor_score, round);
+		const [winner1, winner2] = GetNamesFromPositions(group.players, winners_positions);
 
 		return `<tr><td>${round}. erän voittajat:</td>`
-			+ `<td>${StylizeName(winner1)} & ${StylizeName(winner2)}</td>`
-			+ `<td><span class='points'>+${Math.abs(group.games[round-1])}`
+			+ `<td>${StylizePlayerName(winner1)} & ${StylizePlayerName(winner2)}</td>`
+			+ `<td><span class='points'>+${Math.abs(anchor_score)}`
 			+ "</span></td></tr>";
 	}
 
-	function GetWinners(round) {
+	// For this round and anchor score, what are the starting positions of winners?
+	function CalculateWinnersPositions(anchor_score, round) {
 
-		// Player who starts at position 1 plays first with player who starts
-		// at 4th, then 3rd and last 2nd position
-		const partnerOfFirst = 5 - round;
+		// Player at position 1 plays first with 4th, 3rd and last with 2nd position
+		const partner_position = 5 - round;
 		
-		// group.rounds_scores are from first player perspective
-		const winners = group.games[round-1] > 0
-			? [1, partnerOfFirst]
-			: [2, 3, 4].filter(player => player !== partnerOfFirst);
+		return anchor_score > 0
+			? [1, partner_position]
+			: [2, 3, 4].filter(position => position !== partner_position);
+	}
 
-		return group.players
-			.filter(p => winners.includes(p.start_position))
+	function GetNamesFromPositions(players, start_positions) {
+		return players
+			.filter(p => start_positions.includes(p.start_position))
 			.sort((p1, p2) => (p2.score) - (p1.score))
 			.map(p => p.name);
 	}
 
 	const rounds_table = document.createElement("table")
 	rounds_table.classList.add("roundscores")
-	rounds_table.innerHTML	= CreateRoundRow(1)
-							+ CreateRoundRow(2)
-							+ CreateRoundRow(3);
+	rounds_table.innerHTML	= CreateRoundRow(group, 1)
+							+ CreateRoundRow(group, 2)
+							+ CreateRoundRow(group, 3);
 	
 	const box = document.createElement("div")
 	box.classList.add("games")
@@ -204,7 +209,7 @@ function DrawPositionCell(competitor, state) {
 function DrawNameCell(competitor) {
 
 	let cell_name = document.createElement("td");
-	cell_name.innerHTML = StylizeName("<a href='p/"+competitor.name+".html'>"+competitor.name+"</a>");
+	cell_name.innerHTML = StylizePlayerName("<a href='p/"+competitor.name+".html'>"+competitor.name+"</a>");
 
 	return cell_name;
 }
