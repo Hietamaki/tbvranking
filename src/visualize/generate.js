@@ -22,7 +22,7 @@ exports.GenerateHTML = function (events_by_series, event) {
 		let group_elem = document.createElement("div")
 		group_elem.innerHTML = "<h2>Lohkon "+(lohko++)+" tulokset</h2>"
 
-		group_elem.appendChild(DrawScoreTable(group, event.date))
+		group_elem.appendChild(DrawScoreTable(group))
 		group_elem.appendChild(DrawRoundsBox(group))
 		content_elem.appendChild(group_elem)
 	}

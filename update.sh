@@ -11,6 +11,7 @@ fi
 
 #rm events.db
 node src/convert_to_db.js
+node src/transform_data.js
 node src/visualize.js
 node src/visualize-players.js
 rm html/index.html

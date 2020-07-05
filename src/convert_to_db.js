@@ -20,7 +20,7 @@ fs.readdir("cache/events/", (err, files) => {
 		for (let dom_group of GetGroupsFromResultsDOM(event_id))
 			record.groups.push(CreateGroupFromDOM(dom_group, starting_rankings, record));
 		
-		if (record.groups.some(group => group.games.some(game => game !== ""))) {
+		if (record.groups.some(group => group.scores.some(game => game !== ""))) {
 			console.log("Adding event to database: "+file)
 
 			edb.update({id: event_id}, record, {upsert: true}, (error, replaced) => {
@@ -47,7 +47,7 @@ function CreateGroupFromDOM(dom_group, starting_rankings, event) {
 
 	let group = {
 		players: [],
-		games: []
+		scores: []
 	}
 
 	for (let dom_player of dom_group) {
@@ -58,7 +58,7 @@ function CreateGroupFromDOM(dom_group, starting_rankings, event) {
 		// Saving round scores from first player perspective 1-4, 1-3, 1-2
 		if (player.start_position == 1) {
 			
-			group.games = GetGamesFromPlayerDOM(dom_player);
+			group.scores = GetScoresFromPlayerDOM(dom_player);
 		}
 
 		//what = player.name.replace(/[^\w\s]/gi, '')
@@ -96,7 +96,7 @@ function CreatePlayerObject( dom_player, starting_rankings ) {
 	}
 }
 
-function GetGamesFromPlayerDOM(dom_player) {
+function GetScoresFromPlayerDOM(dom_player) {
 	return [
 		dom_player.querySelector(".views-field-game1").innerHTML.trim(),
 		dom_player.querySelector(".views-field-game2").innerHTML.trim(),
