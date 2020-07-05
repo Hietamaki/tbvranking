@@ -9,11 +9,11 @@ if [ $1 ]; then
 	node src/fetcher.js $@
 fi
 
-#rm events.db
 node src/convert_to_db.js
 node src/transform_data.js
 node src/visualize.js
 node src/visualize-players.js
+cp static/* html
 rm html/index.html
 cp `ls html/*.html | tail -n 1` html/index.html
 cp -r html/* ../www/tbv/

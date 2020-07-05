@@ -44,9 +44,9 @@ function savePlayer(record) {
 function CalculatePlayerScores(player, date) {
 
 	const difference = (player.rank_new - player.rank_old).toFixed(2);
-	const add_sign = player.rank_change > 0 ?  "+" : "";
-	player.rank_change = add_sign + difference;
+	const add_sign = difference > 0 ?  "+" : "";
 
+	player.rank_change = add_sign + difference;
 	player.ball_score = (player.score * getBallScore(date)).toFixed(2);
 	player.placement_score = (player.event_score - player.ball_score);
 	player.last_week_score = (player.rank_new - player.event_score).toFixed(2);
