@@ -15,8 +15,8 @@ function LoadFromDB() {
 			console.log("Transforming event: "+event.id);
 			for (group of event.groups) {
 				group.winners = GetWinners(group);
-				group.scores = group.scores.map(score => Math.abs(score));
-				group.players = group.players.map(p => CalculatePlayerScores(p, event.date));
+				group.scores = GetScores(group.scores);
+				group.players = GetPlayers(group.players, event.date);
 			}
 			saveEvent(event);
 		}
@@ -39,6 +39,29 @@ function savePlayer(record) {
 		{ upsert: true },
 		error => {error && console.log(error)}
 	);
+}
+
+function GetScores(scores) {
+	return scores.map(score => Math.abs(score));
+}
+
+function GetPlayers(players, date) {
+
+	players.reduce((position, player, i) => {
+		if (i > 0) {
+			if (players[i-1].score !== player.score) {
+				position = i + 1
+				player.position_shared = false;
+			}
+			else
+				player.position_shared = true;
+		}
+		player.end_position = position;
+		return position;
+	}, 1);
+
+
+	return players.map(p => CalculatePlayerScores(p, date))
 }
 
 function CalculatePlayerScores(player, date) {

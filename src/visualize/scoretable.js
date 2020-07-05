@@ -8,17 +8,11 @@ exports.DrawScoreTable = function (group) {
 	table.appendChild(CreateCol("name"));
 	table.appendChild(CreateCol("points"));
 
-	var position_state = {
-		placement: [1, 2, 3, 4],
-		i: 0,
-		previous_score: ""
-	}
-
 	for (let player of group.players) {
 
 		let row = document.createElement("tr");
 
-		row.appendChild(DrawPositionCell(player, position_state))
+		row.appendChild(DrawPositionCell(player))
 		row.appendChild(DrawNameCell(player))
 		row.appendChild(DrawPointsCell(player))
 		row.appendChild(DrawRankingCell(player))
@@ -35,17 +29,12 @@ function CreateCol(classname) {
 	return col;
 }
 
-function DrawPositionCell(player, state) {
+function DrawPositionCell(player, prev_position) {
 
 	let cell_position = document.createElement("td");
 		
-	if (state.previous_score === player.score) 
-		state.placement[state.i] = state.placement[state.i-1]
-	else
-		cell_position.innerHTML = `<span class="position">${state.placement[state.i]}. </span>`
-
-	state.previous_score = player.score
-	state.i++
+	if (!player.position_shared) 
+		cell_position.innerHTML = `<span class="position">${player.end_position}. </span>`
 
 	return cell_position
 }
