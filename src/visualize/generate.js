@@ -71,7 +71,7 @@ function DrawSerieDropdown(events_by_series, type) {
 	menubox.appendChild(menubutton);
 	menubox.appendChild(menu)
 
-	for (page of events_by_series[type].sort().reverse()) {
+	for (page of events_by_series[type].sort((x, y) => y[0] - x[0])) {
 		let link = document.createElement("a");
 		link.href = page[0]+".html"
 

@@ -15,5 +15,5 @@ node src/visualize.js
 node src/visualize-players.js
 cp static/* html
 rm html/index.html
-cp `ls html/*.html | tail -n 1` html/index.html
+cp `ls -v html/*.html | tail -n 1` html/index.html
 cp -r html/* ../www/tbv/
