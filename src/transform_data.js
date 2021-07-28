@@ -1,6 +1,10 @@
 const fs = require("fs");
 const nedb = require("nedb");
 
+const { GetPlayers } = require("./transform/players");
+const { GetWinners } = require("./transform/winners");
+const { GetRankings } = require("./transform/rankings");
+
 const edb = new nedb({filename: "db/events.db", autoload: true});
 const pdb = new nedb({filename: "db/players.db", autoload: true});
 
@@ -10,9 +14,12 @@ function LoadFromDB() {
 	edb.find({}, function(err, events) {
 
 		//const events_by_series = ListEventsBySeries(events)
+		//let rankings = GetRankings(events);
 
 		for (event of events) {
 			console.log("Transforming event: "+event.id);
+			event.series = GetSeries(event);
+
 			for (group of event.groups) {
 				group.winners = GetWinners(group);
 				group.scores = GetScores(group.scores);
@@ -45,75 +52,12 @@ function GetScores(scores) {
 	return scores.map(score => Math.abs(score));
 }
 
-function GetPlayers(players, date) {
+function GetSeries(event) {
 
-	players.reduce((position, player, i) => {
-		if (i > 0) {
-			if (players[i-1].score !== player.score) {
-				position = i + 1
-				player.position_shared = false;
-			}
-			else
-				player.position_shared = true;
-		}
-		player.end_position = position;
-		return position;
-	}, 1);
-
-
-	return players.map(p => CalculatePlayerScores(p, date))
-}
-
-function CalculatePlayerScores(player, date) {
-
-	const difference = (player.rank_new - player.rank_old).toFixed(2);
-	const add_sign = difference > 0 ?  "+" : "";
-
-	player.rank_change = add_sign + difference;
-	player.ball_score = (player.score * getBallScore(date)).toFixed(2);
-	player.placement_score = (player.event_score - player.ball_score);
-	player.last_week_score = (player.rank_new - player.event_score).toFixed(2);
-	player.last_last_week_score = (player.rank_old - player.last_week_score).toFixed(2);
-
-	return player;
-}
-
-function getBallScore(date) {
-	if (date.split(".")[2] >= 2020)
-		return 0.05;
-	else
-		return 0.045;
-}
-
-
-function GetWinners(group) {
-
-	const winners = [];
-	for (round = 1; round <= 3; round++) {
-		//scoreboard is anchored to first in group's perspective
-		const anchor_score = group.scores[round - 1];
-		const winners_positions = CalculateWinnersPositions(anchor_score, round);
-		winners.push(GetNamesFromPositions(group.players, winners_positions));
+	for (tag of event.tags) {
+		if (tag.match(/^\d{4}-\w$/))
+			return tag;
 	}
-	return winners;
-}
-
-// For this round and anchor score, what are the starting positions of winners?
-function CalculateWinnersPositions(anchor_score, round) {
-
-	// Player at position 1 plays first with 4th, 3rd and last with 2nd position
-	const partner_position = 5 - round;
-	
-	return anchor_score > 0
-		? [1, partner_position]
-		: [2, 3, 4].filter(position => position !== partner_position);
-}
-
-function GetNamesFromPositions(players, start_positions) {
-	return players
-		.filter(p => start_positions.includes(p.start_position))
-		.sort((p1, p2) => (p2.score) - (p1.score))
-		.map(p => p.name);
 }
 
 function ListEventsBySeries(events) {
@@ -121,14 +65,10 @@ function ListEventsBySeries(events) {
 	const events_by_series = {};
 
 	for (event of events) {
-		for (tag of event.tags) {
-			if (!tag.match(/^\d{4}-\w$/))
-				continue;
-			if (!events_by_series[tag])
-				events_by_series[tag] = [];
-			
-			events_by_series[tag].push([event.id, event.date]);
-		}
+		if (!events_by_series[event.series])
+			events_by_series[event.series] = [];
+		
+		events_by_series[event.series].push([event.id, event.date]);
 	}
 	return events_by_series;
 }
