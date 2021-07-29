@@ -63,7 +63,7 @@ function DrawGroupCounts(events) {
 	for (let eventname of Object.keys(events)) {
 		let event = events[eventname];
 		
-		groups[event.group] += 1
+		groups[event.group - 1] += 1
 	}
 
 	return `<canvas id="myChart" width="400" height="400"></canvas>
