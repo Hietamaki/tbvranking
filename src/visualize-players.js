@@ -30,22 +30,55 @@ function GenerateHTML(player) {
 	let content_elem = DrawContentDiv()
 	document.body.appendChild(content_elem)
 
-	//let previous_group = []
-	let lohko = 1
+	content_elem.innerHTML += DrawEventsChart(player.events);
+	content_elem.innerHTML += DrawBestWeek(player.events);
+	return new_dom.serialize();
+}
 
-	content_elem.innerHTML += '<canvas id="canvas"></canvas>';
+function DrawContentDiv() {
+	let content = document.createElement("div")
+	content.id = "content"
 	
-	//let rarr = "";
-	//let rerr = "";
+	let upperbox = document.createElement("div")
+	upperbox.id = "upperbox"
+	content.appendChild(upperbox)
+	let title = document.createElement("h1")
+	
+	title.innerHTML = player.name
+	content.appendChild(title)
+
+	return content;
+}
+
+function DrawBestWeek(events) {
+	
+	let best_week_id
+	let best_week_date
+	let best_week_points = 0
+
+	for (let eventname of Object.keys(events)) {
+		let event = events[eventname];
+
+		if (best_week_points < event.points) {
+			best_week_id = eventname
+			best_week_points = event.points
+			best_week_date = event.date
+		}
+	}
+
+	return `<div class="bestweek_container">Paras viikko: <a href='../${best_week_id}.html' class='bestweek'> ${best_week_date}, ${best_week_points} pistettä </a></div>`
+}
+function DrawEventsChart(player_events) {
+	
 	let season_data = {};
 	var i=0
 	let dates = []
 	let events = []
 	let points = []
 
-	for (let eventname of Object.keys(player.events)) {
+	for (let eventname of Object.keys(player_events)) {
 		
-		let event = player.events[eventname];
+		let event = player_events[eventname];
 
 		if (!season_data[event.season])
 			season_data[event.season] = ""
@@ -54,22 +87,6 @@ function GenerateHTML(player) {
 		dates.push(event.date)
 		events.push(eventname)
 		points.push(event.points)
-
-		
-
-		//rarr += event.event_score +","
-		//rerr += event.points +","
-
-		//console.log(group)
-		//let group_elem = document.createElement("div")
-		//group_elem.innerHTML = "<h2>Lohkon "+(lohko++)+" tulokset</h2>"
-
-		//group_elem.appendChild(DrawPositionScores(group, previous_group))
-		//group_elem.appendChild(DrawScoreTable(group))
-		//group_elem.appendChild(DrawRoundsBox(group))
-		//content_elem.appendChild(group_elem)
-
-		//previous_group = group;
 	}
 
 	var colors = ["red", "blue", "orange", "green", "purple", "yellow"]
@@ -78,10 +95,11 @@ function GenerateHTML(player) {
 		k = 0;
 
 	for (season of Object.entries(season_data)) {
+		let color = colors[k++ % colors.length];
 		dataset += `{
 			label: '${season[0]}',
-			backgroundColor: '${colors[k]}',
-			borderColor: '${colors[k++]}',
+			backgroundColor: '${color}',
+			borderColor: '${color}',
 			data: [${season[1]}],
 			fill: false,
 			showLine: true,
@@ -90,7 +108,7 @@ function GenerateHTML(player) {
 		label += season[1]
 	}
 
-	content_elem.innerHTML += `<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+	return '<canvas id="canvas"></canvas>' + `<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 		<div id="canvas-holder1" style="width:75%;">
 			<div class="chartjs-tooltip" id="tooltip"></div>
 		</div>
@@ -208,21 +226,5 @@ Chart.canvasHelpers.clipArea = function(ctx, clipArea) {
 			};
 		};
 </script>`;
-	
-	return new_dom.serialize();
-}
 
-function DrawContentDiv() {
-	let content = document.createElement("div")
-	content.id = "content"
-	
-	let upperbox = document.createElement("div")
-	upperbox.id = "upperbox"
-	content.appendChild(upperbox)
-	let title = document.createElement("h1")
-	
-	title.innerHTML = player.name
-	content.appendChild(title)
-
-	return content;
 }

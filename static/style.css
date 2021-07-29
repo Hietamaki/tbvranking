@@ -227,3 +227,10 @@ canvas{
 a.blaa {
 	color: white;
 }
+
+.bestweek_container {
+	margin: 2em;
+	border: solid gray 0px;
+	padding: 20px;
+	background-color: gainsboro;
+}
