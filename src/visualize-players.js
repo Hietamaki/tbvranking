@@ -55,11 +55,12 @@ function DrawBestWeek(events) {
 	let best_week_id
 	let best_week_score
 	let best_week_date
-	let best_week_points = 0
+	let best_week_points = -100
 
 	for (let eventname of Object.keys(events)) {
 		let event = events[eventname];
 
+		//console.log(best_week_points +" vs "+event.points)
 		if (best_week_points < event.points || (event.points == best_week_points && best_week_score < event.event_score)) {
 			best_week_id = eventname
 			best_week_points = parseInt(event.points)
