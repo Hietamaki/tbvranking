@@ -72,6 +72,7 @@ function CreateGroupFromDOM(dom_group, starting_rankings, event) {
 		if (!players[player.name])
 			players[player.name] = {}
 		players[player.name][event.id] = {
+			group: player.group,
 			points: Number(player.score).toFixed(0),
 			event_score: player.event_score,
 			date: event.date,
@@ -88,6 +89,7 @@ function CreatePlayerObject( dom_player, starting_rankings ) {
 
 	return {
 		name: name,
+		group: dom_player.querySelector(".views-field-gid").innerHTML.trim(),
 		score: dom_player.querySelector(".views-field-deltapoints").innerHTML.trim(),
 		event_score: dom_player.querySelector(".views-field-score").innerHTML.trim(),
 		rank_new: Number(dom_player.querySelector(".views-field-ranking").innerHTML),

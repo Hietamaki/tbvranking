@@ -31,7 +31,12 @@ function GenerateHTML(player) {
 	document.body.appendChild(content_elem)
 
 	content_elem.innerHTML += DrawEventsChart(player.events);
-	content_elem.innerHTML += DrawBestWeek(player.events);
+
+	let infobox = document.createElement("div")
+	infobox.classList.add("infobox")
+	infobox.innerHTML = DrawBestWeek(player.events);
+	content_elem.appendChild(infobox)
+	content_elem.innerHTML += DrawGroupCounts(player.events);
 	return new_dom.serialize();
 }
 
@@ -48,6 +53,58 @@ function DrawContentDiv() {
 	content.appendChild(title)
 
 	return content;
+}
+
+function DrawGroupCounts(events) {
+	
+	// assuming max 20 groups
+	let groups = [0,0,0,0,0,0]
+	
+	for (let eventname of Object.keys(events)) {
+		let event = events[eventname];
+		
+		groups[event.group] += 1
+	}
+
+	return `<canvas id="myChart" width="400" height="400"></canvas>
+	<script>
+	var ctx = document.getElementById('myChart').getContext('2d');
+	var myChart = new Chart(ctx, {
+		type: 'doughnut',
+		data: {
+			labels: ['Lohko 1', 'Lohko 2', 'Lohko 3', 'Lohko 4', 'Lohko 5', 'Lohko 6'],
+			datasets: [{
+				label: '# of Votes',
+				data: ${JSON.stringify(groups)},
+				backgroundColor: [
+					'rgba(255, 99, 132, 0.2)',
+					'rgba(54, 162, 235, 0.2)',
+					'rgba(255, 206, 86, 0.2)',
+					'rgba(75, 192, 192, 0.2)',
+					'rgba(153, 102, 255, 0.2)',
+					'rgba(255, 159, 64, 0.2)'
+				],
+				borderColor: [
+					'rgba(255, 99, 132, 1)',
+					'rgba(54, 162, 235, 1)',
+					'rgba(255, 206, 86, 1)',
+					'rgba(75, 192, 192, 1)',
+					'rgba(153, 102, 255, 1)',
+					'rgba(255, 159, 64, 1)'
+				],
+				borderWidth: 1
+			}]
+		},
+		options: {
+			scales: {
+				y: {
+					beginAtZero: true
+				}
+			}
+		}
+	});
+	</script>
+	`
 }
 
 function DrawBestWeek(events) {
@@ -69,8 +126,9 @@ function DrawBestWeek(events) {
 		}
 	}
 
-	return `<div class="bestweek_container">Paras viikko: <a href='../${best_week_id}.html' class='bestweek'> ${best_week_date}, ${best_week_points} pistettä </a></div>`
+	return `<div class="bestweek_container">Eniten pisteitä viikossa: <a href='../${best_week_id}.html' class='bestweek'> ${best_week_date}, ${best_week_points} pistettä </a></div>`
 }
+
 function DrawEventsChart(player_events) {
 	
 	let season_data = {};
