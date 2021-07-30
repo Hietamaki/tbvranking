@@ -110,18 +110,23 @@ function DrawGroupCounts(events) {
 
 function DrawAverageGroup(events) {
 	
-	let groups = []
+	let groups = {}
 
 	for (let eventname of Object.keys(events)) {
-		let event = events[eventname];
-		groups.push(event.group)
+		let event = events[eventname]
+		if (!groups[event.season])
+			groups[event.season] = []
+		groups[event.season].push(event.group)
 	}
 
-	
+	let means = {}
 
-	let mean = groups.reduce((prev, cur) => cur += prev) / groups.length;
+	for (let group of Object.keys(groups)) {
+		let season_mean = groups[group].reduce((prev, cur) => cur += prev) / groups[group].length;
+		means[group] = season_mean.toFixed(2);
+	}
 
-	return `<div class="infoline">Keskimääräinen lohko: ${mean.toFixed(2)}</div>`
+	return `<div class="infoline">Keskimääräinen lohko: ${JSON.stringify(means)}</div>`
 }
 
 function DrawBestWeek(events) {
