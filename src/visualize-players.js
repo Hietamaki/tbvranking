@@ -35,6 +35,7 @@ function GenerateHTML(player) {
 	let infobox = document.createElement("div")
 	infobox.classList.add("infobox")
 	infobox.innerHTML = DrawBestWeek(player.events);
+	infobox.innerHTML += DrawAverageGroup(player.events);
 	content_elem.appendChild(infobox)
 	content_elem.innerHTML += DrawGroupCounts(player.events);
 	return new_dom.serialize();
@@ -107,6 +108,22 @@ function DrawGroupCounts(events) {
 	`
 }
 
+function DrawAverageGroup(events) {
+	
+	let groups = []
+
+	for (let eventname of Object.keys(events)) {
+		let event = events[eventname];
+		groups.push(event.group)
+	}
+
+	
+
+	let mean = groups.reduce((prev, cur) => cur += prev) / groups.length;
+
+	return `<div class="infoline">Keskimääräinen lohko: ${mean.toFixed(2)}</div>`
+}
+
 function DrawBestWeek(events) {
 	
 	let best_week_id
@@ -126,7 +143,7 @@ function DrawBestWeek(events) {
 		}
 	}
 
-	return `<div class="bestweek_container">Eniten pisteitä viikossa: <a href='../${best_week_id}.html' class='bestweek'> ${best_week_date}, ${best_week_points} pistettä </a></div>`
+	return `<div class="bestweek_container">Eniten pisteitä viikolla: <a href='../${best_week_id}.html' class='bestweek'> ${best_week_date}, ${best_week_points} pistettä </a></div>`
 }
 
 function DrawEventsChart(player_events) {

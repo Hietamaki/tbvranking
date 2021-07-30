@@ -72,7 +72,7 @@ function CreateGroupFromDOM(dom_group, starting_rankings, event) {
 		if (!players[player.name])
 			players[player.name] = {}
 		players[player.name][event.id] = {
-			group: player.group,
+			group: parseInt(player.group),
 			points: Number(player.score).toFixed(0),
 			event_score: player.event_score,
 			date: event.date,
