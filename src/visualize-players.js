@@ -158,6 +158,7 @@ function DrawEventsChart(player_events) {
 	let dates = []
 	let events = []
 	let points = []
+	let groups = []
 
 	for (let eventname of Object.keys(player_events)) {
 		
@@ -170,6 +171,7 @@ function DrawEventsChart(player_events) {
 		dates.push(event.date)
 		events.push(eventname)
 		points.push(event.points)
+		groups.push(event.group)
 	}
 
 	var colors = ["red", "blue", "orange", "green", "purple", "yellow"]
@@ -210,6 +212,7 @@ Chart.canvasHelpers.clipArea = function(ctx, clipArea) {
     ctx.clip();
 };
 		var events = `+JSON.stringify(events)+`
+		var groups = `+JSON.stringify(groups)+`
 		var points = `+JSON.stringify(points)+`
 		var dates = `+JSON.stringify(dates)+`
 
@@ -224,7 +227,7 @@ Chart.canvasHelpers.clipArea = function(ctx, clipArea) {
 			if (tooltip.dataPoints.length > 0) {
 				tooltip.dataPoints.forEach(function(dataPoint) {
 					let index = dataPoint.xLabel;
-					var content = ["Pisteet: <b>"+dataPoint.yLabel+"</b>", "Eräpisteet: <b>"+points[index]+"</b>", dates[index]].join('<br>');
+					var content = ["<b>Tapahtuma "+dates[index]+"</b>", "", "<b>"+dataPoint.yLabel+"</b> pistettä", "Lohko: <b>"+groups[index]+"</b>", "Pallopisteet: <b>"+points[index]+"</b>"].join('<br>');
 					var $tooltip = $('#tooltip');//-' + dataPoint.datasetIndex);
 					$tooltip.html("<a href='../"+events[index]+".html' class='blaa'>"+content+"</a>");
 					$tooltip.css({
