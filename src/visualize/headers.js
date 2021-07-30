@@ -5,7 +5,7 @@ exports.GetHeaders = function (title="", player_page = false) {
    `<link rel='stylesheet' href='../style.css'>
     <script src='../client.js'></script>
     <script src='../Chart.bundle.min.js'></script>
-    <script src='../utils.js'></script>"`
+    <script src='../utils.js'></script>`
   : 
    `<link rel='stylesheet' href='style.css'>
     <script src='client.js'></script>`;
