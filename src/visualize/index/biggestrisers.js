@@ -10,7 +10,8 @@ exports.DrawBiggestRisers = function (events) {
 }
 
 function Biggest(events) {
-    events = events.sort((a, b) => a.id - b.id)
+    
+    events = events.sort((a, b) => b.id - a.id)
     let groups = events[0].groups.concat(events[1].groups)
     
     let players = groups

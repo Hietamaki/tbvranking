@@ -4,6 +4,9 @@ const document = (new JSDOM()).window.document;
 exports.DrawRecentEvents = function (events) {
 	let content = document.createElement("div")
 	content.innerHTML += "<h2>Tuoreimmat tapahtumat</h2>"
+
+    events = events.sort((a, b) => b.id - a.id)
+    
 	content.innerHTML += LinkToEvent(events[0])
 	content.innerHTML += LinkToEvent(events[1])
 
