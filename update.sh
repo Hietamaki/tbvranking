@@ -13,6 +13,7 @@ node src/convert_to_db.js
 node src/transform_data.js
 node src/visualize-events.js
 node src/visualize-players.js
+node src/visualize-rankings.js
 node src/visualize-index.js
 cp static/* html
 #rm html/index.html

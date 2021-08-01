@@ -22,12 +22,21 @@ exports.GenerateHTML = function (events, events_by_series) {
 	let content = DrawContentDiv(events_by_series)
 	content.appendChild(DrawEventSelector(events_by_series))
 	content.appendChild(DrawTitle())
+	content.appendChild(DrawRankings())
 	content.appendChild(DrawRecentEvents(events))
 	content.appendChild(DrawBiggestRisers(events))
 
 	document.body.appendChild(content)
 
 	return new_dom.serialize();
+}
+
+function DrawRankings() {
+	let content = document.createElement("div")
+	content.innerHTML = "<a href='2021-M.html'>Ranking 2021 Miehet</a><br>"
+	content.innerHTML += "<a href='2021-N.html'>Ranking 2021 Naiset</a>"
+
+	return content;
 }
 
 function DrawContentDiv() {
