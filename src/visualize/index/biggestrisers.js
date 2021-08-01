@@ -23,7 +23,10 @@ function Biggest(events) {
 
     let risers = ""
 
-    for (let i = 0; i <= 5; i++) {
+    if (players.length < 8)
+        return "---";
+
+    for (let i = 0; i <= 7; i++) {
         risers += `<div class="riser">${i+1}. ${players[i].name} ${players[i].rank_change}</div>`;
 
     }
