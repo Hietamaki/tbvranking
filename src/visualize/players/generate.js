@@ -2,6 +2,7 @@ const { GetHeaders } = require("../headers");
 const { DrawEventsChart } = require("./eventschart");
 const { DrawGroupCounts } = require("./groupcounts");
 const { DrawGroupsMeanChart } = require("./groupsmeanchart");
+const { DrawRank } = require("./rank");
 const { DrawInfoBox } = require("./infobox");
 const { JSDOM } = require('jsdom');
 
@@ -13,6 +14,7 @@ exports.GenerateHTML = function (player) {
 	let content_elem = DrawContentDiv()
 	document.body.appendChild(content_elem)
 
+	content_elem.appendChild(DrawRank(player));
 	content_elem.innerHTML += DrawEventsChart(player.events);
     
 	content_elem.appendChild(DrawInfoBox(player.events))

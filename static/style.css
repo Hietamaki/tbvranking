@@ -241,3 +241,17 @@ a.blaa {
 	padding: 20px;
 	background-color: gainsboro;
 }
+
+.rank-container {
+	margin: 10px;
+	width:100%;
+	text-align: right;
+}
+
+.rank {
+	font-size:xx-large;
+}
+
+.rank-subtext {
+	font-weight: bold;
+}

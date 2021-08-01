@@ -28,8 +28,40 @@ function LoadFromDB() {
 			saveEvent(event);
 		}
 	});
+
+	pdb.find({}, function(err, players) {
+
+		//const players_by_series = ListplayersBySeries(players)
+		//let rankings = GetRankings(players);
+		let men = Ranks([].concat(players), "2021-M");
+		
+		for (player of men) {
+			console.log("Transforming player: "+player.name);
+			savePlayer(player);
+		}
+		let women = Ranks(players, "2021-N");
+		
+		for (player of women) {
+			console.log("Transforming player: "+player.name);
+			savePlayer(player);
+		}
+
+	});
 }
 
+function Ranks(players, season) {
+	
+	return players
+		.map(x => {x.last_event = Object.values(x.events).reverse()[0]; return x})
+		.map(x => {	x.season = x.last_event.season;
+					x.rank_score = x.last_event.rank_score;
+					return x})
+		.filter(x => x.season == season)
+		.sort((a,b) => b.rank_score - a.rank_score)
+		.map((x, i) => {x.rank = i + 1; x.series = x.last_event.season; return x})
+
+
+}
 function saveEvent(record) {
 	edb.update(
 		{id: record.id},
@@ -42,7 +74,7 @@ function saveEvent(record) {
 function savePlayer(record) {
 	pdb.update(
 		{ name: record.name },
-		{ record },
+		record,
 		{ upsert: true },
 		error => {error && console.log(error)}
 	);

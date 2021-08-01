@@ -75,6 +75,7 @@ function CreateGroupFromDOM(dom_group, starting_rankings, event) {
 			group: parseInt(player.group),
 			points: Number(player.score).toFixed(0),
 			event_score: player.event_score,
+			rank_score: player.rank_new,
 			date: event.date,
 			season
 		}

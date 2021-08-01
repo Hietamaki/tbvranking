@@ -1,7 +1,7 @@
 // Returns collection of rankings
 //  {eventid: ranking[]} object
 exports.GetRankings = function(events) {
-    events = events.sort((e1, e2) => e1.id > e2.id);
+    events = events.sort((e1, e2) => e1.id - e2.id);
    
     let rankings = events[0].groups
         .reduce((prev, g) => {console.log(g); prev.concat(g.map(g => g.players)), []})
