@@ -10,8 +10,7 @@ exports.DrawBiggestRisers = function (events) {
 }
 
 function Biggest(events) {
-    //console.log(events)
-    
+    events = events.sort((a, b) => a.id - b.id)
     let groups = events[0].groups.concat(events[1].groups)
     
     let players = groups
@@ -27,7 +26,7 @@ function Biggest(events) {
         risers += `<div class="riser">${i+1}. ${players[i].name} ${players[i].rank_change}</div>`;
 
     }
-    
+
 	return `<div class="recentevent">${risers}</div>`;
 
 }
