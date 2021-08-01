@@ -3,7 +3,7 @@ const document = (new JSDOM()).window.document;
 
 exports.DrawBiggestRisers = function (events) {
 	let content = document.createElement("div")
-	content.innerHTML +=   "<h2>Viikon isoimmat nousijat</h2>"
+	content.innerHTML +=   "<h2>Viikon nousijat</h2>"
 	content.innerHTML += Biggest(events)
 
 	return content;
@@ -32,7 +32,7 @@ function Biggest(events) {
         return "---";
 
     for (let i = 0; i <= 7; i++) {
-        risers += `<div class="riser">${i+1}. <a href="p/${players[i].name}.html">${players[i].name}</a>${players[i].rank_change}</div>`;
+        risers += `<div class="riser">${i+1}. <a href="p/${players[i].name}.html">${players[i].name}</a> ${players[i].rank_change}</div>`;
 
     }
 
