@@ -1,6 +1,8 @@
 const { JSDOM } = require('jsdom');
 const { GetHeaders } = require("../headers");
 const { DrawEventSelector } = require("../eventselector");
+const { DrawRecentEvents } = require("./recentevents");
+const { DrawBiggestRisers } = require("./biggestrisers");
 
 //
 /// Sisältää:
@@ -12,7 +14,7 @@ const { DrawEventSelector } = require("../eventselector");
 
 var document;
 
-exports.GenerateHTML = function (events_by_series) {
+exports.GenerateHTML = function (events, events_by_series) {
 
 	var new_dom = (new JSDOM(GetHeaders()));
 	document = new_dom.window.document;
@@ -20,6 +22,8 @@ exports.GenerateHTML = function (events_by_series) {
 	let content = DrawContentDiv(events_by_series)
 	content.appendChild(DrawEventSelector(events_by_series))
 	content.appendChild(DrawTitle())
+	content.appendChild(DrawRecentEvents(events))
+	content.appendChild(DrawBiggestRisers(events))
 
 	document.body.appendChild(content)
 

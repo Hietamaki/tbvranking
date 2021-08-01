@@ -14,6 +14,6 @@ db.find({}, function(err, events) {
 
 	fs.writeFile(
 		"./html/index.html",
-		GenerateHTML(events_by_series),
+		GenerateHTML(events, events_by_series),
 		err => err? console.log(err) : null);
 });
