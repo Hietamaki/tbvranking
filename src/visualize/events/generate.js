@@ -1,8 +1,8 @@
 const { JSDOM } = require('jsdom');
-const { GetHeaders } = require("./headers");
+const { GetHeaders } = require("../headers");
 const { DrawRoundsBox } = require("./roundsbox");
 const { DrawScoreTable } = require("./scoretable");
-const { DrawEventSelector } = require("./eventselector");
+const { DrawEventSelector } = require("../eventselector");
 
 var document;
 
@@ -12,10 +12,9 @@ exports.GenerateHTML = function (events_by_series, event) {
 	document = new_dom.window.document;
 	
 	let content = DrawContentDiv(events_by_series)
-	content.appendChild(DrawEventSelector(events_by_series))
+	content.appendChild(DrawEventSelector(events_by_series, event))
 	content.appendChild(DrawTitle(event))
 	content.appendChild(DrawScores(event))
-
 
 	document.body.appendChild(content)
 
