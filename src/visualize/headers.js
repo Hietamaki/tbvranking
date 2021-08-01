@@ -1,6 +1,7 @@
 exports.GetHeaders = function (title="", player_page = false) {
 
-
+  title = title? title + " - TBV tulospalvelu" : "TBV tulospalvelu";
+  
   const imports = player_page?
    `<link rel='stylesheet' href='../style.css'>
     <script src='../client.js'></script>
@@ -14,7 +15,7 @@ exports.GetHeaders = function (title="", player_page = false) {
   <head>
     <meta charset='utf-8'>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
-    <title>${title} - TBV tulospalvelu</title>
+    "<title>${title}</title>
     ${imports}
     <!-- Matomo -->
     <script type="text/javascript">
