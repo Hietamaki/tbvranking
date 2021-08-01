@@ -12,7 +12,12 @@ exports.DrawBiggestRisers = function (events) {
 function Biggest(events) {
     
     events = events.sort((a, b) => b.id - a.id)
-    let groups = events[0].groups.concat(events[1].groups)
+
+    // Two latest events from both women and men
+    let groups = events[0].series == events[1].series ?    
+        events[0].groups :
+        events[0].groups.concat(events[1].groups);
+            
     
     let players = groups
         .map(x => x.players)
