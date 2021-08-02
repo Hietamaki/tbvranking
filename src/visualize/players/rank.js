@@ -4,7 +4,7 @@ const document = (new JSDOM()).window.document;
 exports.DrawRank = function (player) {
     //console.log(player)
 	let content = document.createElement("div")
-	content.innerHTML += `<div class='rank-container'><div class='rank'>Sija: ${player.rank}</div><span class='rank-subtext'>Kilpailee sarjassa ${player.series}</span></div>`;
+	content.innerHTML += `<div class='rank-container'><a href="../${player.series}.html"><div class='rank'>Sija: ${player.rank}</div><span class='rank-subtext'>Kilpailee sarjassa ${player.series}</span></a></div>`;
 	//content.innerHTML += Biggest(events);
     if (!player.rank)
         content.innerHTML = "";
