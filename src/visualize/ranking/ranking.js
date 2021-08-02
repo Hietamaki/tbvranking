@@ -48,7 +48,7 @@ function Biggest(players, season) {
 
 
     var toplist = "<table>";
-	toplist += "<tr><th>Sija</th><th>Kisaaja</th><th>Muutos viime viikkoon</th><th>Osallistumisia</th><th>Pisteet</th></tr>";
+	toplist += "<tr><th>Sija</th><th>Kisaaja</th><th>Muutos</th><th>Kerrat</th><th>Pisteet</th></tr>";
 
     for (let i = 0; i < players.length; i++) {
 		let name = players[i].name

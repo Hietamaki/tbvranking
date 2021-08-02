@@ -15,7 +15,7 @@ exports.GetHeaders = function (title="", player_page = false) {
   <head>
     <meta charset='utf-8'>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
-    "<title>${title}</title>
+    <title>${title}</title>
     ${imports}
     <!-- Matomo -->
     <script type="text/javascript">
