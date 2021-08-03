@@ -6,6 +6,7 @@ exports.DrawInfoBox = function (events) {
     let infobox = document.createElement("div")
 	infobox.classList.add("infobox")
 	infobox.innerHTML = DrawBestWeek(events);
+	infobox.innerHTML += "<br />";
 	infobox.innerHTML += DrawAverageGroup(events);
 
     return infobox;
@@ -29,7 +30,11 @@ function DrawAverageGroup(events) {
 		means[group] = season_mean.toFixed(2);
 	}
 
-	return `<div class="infoline">Keskimääräinen lohko: ${JSON.stringify(means)}</div>`
+	return `<div class="infoline">Keskimääräinen lohko: <ul><li>${JSON.stringify(means)
+		.replace(/"/g,"")
+		.replace(/:/g,": ")
+		.replace(/,/g, "</li><li>")
+		.slice(1,-1)}</li></ul></div>`
 }
 
 function DrawBestWeek(events) {
