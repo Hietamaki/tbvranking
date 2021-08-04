@@ -3,6 +3,7 @@ const document = (new JSDOM()).window.document;
 
 exports.DrawBiggestRisers = function (events) {
 	let content = document.createElement("div")
+    content.classList.add("rankinglist")
 	content.innerHTML +=   "<h2>Viikon nousijat</h2>"
 	content.innerHTML += Biggest(events)
 

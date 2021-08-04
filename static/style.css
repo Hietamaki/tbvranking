@@ -145,7 +145,7 @@ tr {
 }
 
 /* Dropdown button on hover & focus */
-.dropbtn:hover, .dropbtn:focus {
+.dropbtn:hover, .dropbtn:focus, .rankingbutton:hover {
     background-color: #2980B9;
 }
 
@@ -249,9 +249,8 @@ a.blaa {
 
 .recentevent {
 	margin: 2em;
-	border: solid gray 0px;
+	border: solid gainsboro 1px;
 	padding: 20px;
-	background-color: gainsboro;
 }
 
 @media (min-width: 800px) {
@@ -286,4 +285,26 @@ a.blaa {
 
 th {
 	padding: 5px;
+}
+
+.footer {
+	color: gray;
+	font-style: italic;
+}
+
+
+.rankingbuttons {
+	display: flex;
+}
+
+div.rankingbutton {
+	margin: 2em;
+	border: solid gainsboro 1px;
+	background-color: #3498DB;
+	color: white;
+	padding: 20px;
+}
+
+a.rankingbutton {
+	color: white;
 }

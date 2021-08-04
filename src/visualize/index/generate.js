@@ -25,16 +25,26 @@ exports.GenerateHTML = function (events, events_by_series) {
 	content.appendChild(DrawRankings())
 	content.appendChild(DrawRecentEvents(events))
 	content.appendChild(DrawBiggestRisers(events))
+	content.appendChild(DrawFooter())
 
 	document.body.appendChild(content)
 
 	return new_dom.serialize();
 }
 
+function DrawFooter() {
+	let bottom = document.createElement("div");
+	bottom.classList.add("footer");
+	bottom.innerHTML = `Tieto haettu <a href='https://turkubeachvolley.fi/' target="_blank">turkubeachvolley.fi</a>-sivustolta ${(new Date()).toLocaleString()}.`;
+
+	return bottom;
+}
+
 function DrawRankings() {
 	let content = document.createElement("div")
-	content.innerHTML = "<a href='2021-M.html'>Ranking 2021 Miehet</a><br>"
-	content.innerHTML += "<a href='2021-N.html'>Ranking 2021 Naiset</a>"
+	content.classList.add("rankingbuttons")
+	content.innerHTML = "<div class='rankingbutton'><a class='rankingbutton' href='2021-M.html'>Ranking 2021 Miehet</a><br></div>"
+	content.innerHTML += "<div class='rankingbutton'><a class='rankingbutton' href='2021-N.html'>Ranking 2021 Naiset</a></div>"
 
 	return content;
 }
