@@ -9,8 +9,13 @@ h1 {
 
 h2 {
 	margin: 20px;
-	text-decoration: underline;
+	text-decoration: none;
 }
+
+.group {
+	margin: auto;
+}
+
 @media (min-width: 405px) {
 	#content {
 		padding: 20px;
@@ -50,7 +55,7 @@ h2 {
 }
 
 .name {
-	font-weight: bold;
+	font-weight: normal;
 }
 
 a:visited {
@@ -303,7 +308,8 @@ th {
 }
 
 div.rankingbutton {
-	margin: 2em;
+	margin: auto;
+	margin-bottom: 2em;
 	border: solid gainsboro 1px;
 	background-color: #B98077;
 	color: white;

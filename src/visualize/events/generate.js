@@ -24,6 +24,7 @@ exports.GenerateHTML = function (events_by_series, event) {
 function DrawScores(event) {
 
 	let groups_container = document.createElement("div")
+	groups_container.classList.add("groups")
 
 	let lohko = 1
 
@@ -34,6 +35,7 @@ function DrawScores(event) {
 		let group_elem = document.createElement("div")
 		group_elem.innerHTML = "<h2>Lohkon "+(lohko++)+" tulokset</h2>"
 
+		group_elem.classList.add("group")
 		group_elem.appendChild(DrawScoreTable(group))
 		group_elem.appendChild(DrawRoundsBox(group))
 		groups_container.appendChild(group_elem)
