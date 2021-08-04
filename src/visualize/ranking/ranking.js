@@ -24,10 +24,14 @@ function GetChangeFromLastWeek(player) {
 
 	let events = Object.values(player.events).reverse()
 
-	if (events.length < 2)
+	if (events.length < 1)
 		return 0;
 	
 	let players_latest_event = parseInt(Object.keys(player.events).reverse());
+	
+	if (events.length == 1 && players_latest_event == latest_event)
+		return 9999;
+	
 	let change = latest_event == players_latest_event && events.length > 1 ? events[0].rank_score - events[1].rank_score : 0
 
 	return change;
@@ -53,7 +57,7 @@ function Biggest(players, season) {
     for (let i = 0; i < players.length; i++) {
 		let name = players[i].name
 		let rank_score = players[i].rank_score
-		let rank_lastweek = StylizeRankChange(players[i].rank_lastweek - i);
+		let rank_lastweek = StylizeRankChange(players[i].rank_lastweek - i, players[i].recent_change == 9999);
 		let events = Object.values(players[i].events).reverse()
 		let osallistumisia = events.filter(x => x.season == season).length
 
@@ -67,11 +71,15 @@ function Biggest(players, season) {
 
 }
 
-function StylizeRankChange(change) {
+function StylizeRankChange(change, new_player) {
 	
 	let style;
 
-	if (change > 0) {
+	if (new_player) {
+		change = "Uusi"
+		style = "new"
+	}
+	else if (change > 0) {
 		change = "+" + change;
 		style = "positive";
 	}

@@ -35,7 +35,7 @@ exports.GenerateHTML = function (events, events_by_series) {
 function DrawFooter() {
 	let bottom = document.createElement("div");
 	bottom.classList.add("footer");
-	bottom.innerHTML = `Tieto haettu <a href='https://turkubeachvolley.fi/' target="_blank">turkubeachvolley.fi</a>-sivustolta ${(new Date()).toLocaleString()}.`;
+	bottom.innerHTML = `Tulostieto haetaan <a href='https://turkubeachvolley.fi/' target="_blank">turkubeachvolley.fi</a>-sivustolta. Päivitetty viimeksi ${(new Date()).toLocaleString()}.`;
 
 	return bottom;
 }

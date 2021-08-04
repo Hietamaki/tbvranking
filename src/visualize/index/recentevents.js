@@ -9,7 +9,10 @@ exports.DrawRecentEvents = function (events) {
     events = events.sort((a, b) => b.id - a.id)
     
 	content.innerHTML += LinkToEvent(events[0])
-	content.innerHTML += LinkToEvent(events[1])
+
+	// Add only second if women had their games
+	if (events[0].date == events[1].date)
+		content.innerHTML += LinkToEvent(events[1])
 
 	return content;
 }

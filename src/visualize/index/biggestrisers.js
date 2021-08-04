@@ -15,7 +15,7 @@ function Biggest(events) {
     events = events.sort((a, b) => b.id - a.id)
 
     // Two latest events from both women and men
-    let groups = events[0].series == events[1].series ?    
+    let groups = events[0].date != events[1].date ?    
         events[0].groups :
         events[0].groups.concat(events[1].groups);
             
@@ -29,10 +29,11 @@ function Biggest(events) {
 
     let risers = ""
 
-    if (players.length < 8)
+    const LIST_LENGTH = 5
+    if (players.length < LIST_LENGTH)
         return "---";
 
-    for (let i = 0; i <= 7; i++) {
+    for (let i = 0; i <= LIST_LENGTH - 1; i++) {
         risers += `<div class="riser">${i+1}. <a href="p/${players[i].name}.html">${players[i].name}</a> ${players[i].rank_change}</div>`;
 
     }
