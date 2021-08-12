@@ -19,8 +19,8 @@ exports.DrawRecentEvents = function (events) {
 
 function LinkToEvent(event) {
 	let groups_reported = event.groups
-		.map(x => x.scores[0])
-		.reduce(((prev, cur) => cur !== NaN ? prev + 1 : prev), 0);
+		.filter(x => x.scores.every(x => x != 0))
+		.length
 	let groups_amount = event.groups.length;
 
 	let eventlink = `<a href="${event.id}.html">Sarjan ${event.series} tapahtuma ${event.date}</a>`;
