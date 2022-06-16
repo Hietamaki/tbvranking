@@ -33,13 +33,15 @@ function LoadFromDB() {
 
 		//const players_by_series = ListplayersBySeries(players)
 		//let rankings = GetRankings(players);
-		let men = Ranks([].concat(players), "2021-M");
+		let current_year = new Date().getFullYear()
+
+		let men = Ranks([].concat(players), current_year+"-M");
 		
 		for (player of men) {
 			console.log("Transforming player: "+player.name);
 			savePlayer(player);
 		}
-		let women = Ranks(players, "2021-N");
+		let women = Ranks(players, current_year+"-W");
 		
 		for (player of women) {
 			console.log("Transforming player: "+player.name);

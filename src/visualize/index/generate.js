@@ -41,10 +41,11 @@ function DrawFooter() {
 }
 
 function DrawRankings() {
+	let current_year = new Date().getFullYear()
 	let content = document.createElement("div")
 	content.classList.add("rankingbuttons")
-	content.innerHTML = "<div class='rankingbutton'><a class='rankingbutton' href='2021-M.html'>Ranking 2021 Miehet</a><br></div>"
-	content.innerHTML += "<div class='rankingbutton'><a class='rankingbutton' href='2021-N.html'>Ranking 2021 Naiset</a></div>"
+	content.innerHTML = `<div class='rankingbutton'><a class='rankingbutton' href='${current_year}-M.html'>Ranking ${current_year} Miehet</a><br></div>`
+	content.innerHTML += `<div class='rankingbutton'><a class='rankingbutton' href='${current_year}-W.html'>Ranking ${current_year} Naiset</a></div>`
 
 	return content;
 }
