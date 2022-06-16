@@ -5,12 +5,12 @@ exports.DrawBiggestRisers = function (events) {
 	let content = document.createElement("div")
     content.classList.add("rankinglist")
 	content.innerHTML +=   "<h2>Viikon nousijat</h2>"
-	content.innerHTML += Biggest(events)
+	content.innerHTML += DrawPlayersByChange(events)
 
 	return content;
 }
 
-function Biggest(events) {
+function DrawPlayersByChange(events) {
     
     events = events.sort((a, b) => b.id - a.id)
 
