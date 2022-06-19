@@ -1,31 +1,29 @@
 const { JSDOM } = require('jsdom');
 const document = (new JSDOM()).window.document;
+const NEW_PLAYER = 9999;
 
-var latest_event;
-
-exports.DrawRanking = function (players, season) {
+exports.DrawRanking = function (players_db, series_name) {
 	let content = document.createElement("div")
 	content.classList.add("rankingcontainer");
-	content.innerHTML +=   "<h2>Ranking "+season+"</h2>"
-	content.innerHTML += DrawRankingTable(players, season)
+	content.innerHTML +=   "<h2>Ranking "+series_name+"</h2>"
+	content.innerHTML += DrawRankingTable(players_db, series_name)
 
 	return content;
 }
 
-function DrawRankingTable(players, season) {
+function DrawRankingTable(players_db, series_name) {
 
-	latest_event = GetLatestEvent(players, season)
-	players = SortByRankAndSaveRankInfo(players, season)
+	players_db = SortPlayersByRankAndMapRankInfo(players_db, series_name)
 
     var toplist = "<table>";
 	toplist += "<tr><th>Sija</th><th>Kisaaja</th><th>Muutos</th><th>Kerrat</th><th>Pisteet</th></tr>";
 
-    for (let i = 0; i < players.length; i++) {
-		let name = players[i].name
-		let rank_score = players[i].rank_score
-		let rank_lastweek = StylizeRankChange(players[i].rank_lastweek - i, players[i].recent_change == 9999);
-		let events = Object.values(players[i].events).reverse()
-		let osallistumisia = events.filter(x => x.season == season).length
+    for (let i = 0; i < players_db.length; i++) {
+		let name = players_db[i].name
+		let rank_score = players_db[i].rank_score
+		let rank_lastweek = StylizeRankChange(players_db[i].rank_lastweek - i, players_db[i].recent_change == NEW_PLAYER);
+		let events = Object.values(players_db[i].events).reverse()
+		let osallistumisia = events.filter(x => x.series_name == series_name).length
 
         toplist += `
 			<tr class="riser">
@@ -40,29 +38,31 @@ function DrawRankingTable(players, season) {
 	toplist += "</table>"
 
 	return `<div class="rankinglist">${toplist}</div>`;
-
 }
 
-function GetLatestEvent(players, season) {
-	return players
-		.filter(x => x.season == season)
-		.map(x => Object.keys(x.events))
-		.map(x => parseInt(x.reverse()[0]))
-		.reduce((prev, cur) => cur > prev ? cur : prev, 0)
-}
+function SortPlayersByRankAndMapRankInfo(players_db, series_name) {
 
-function SortByRankAndSaveRankInfo(players, season) {
-	return players
-		.filter(x => x.season == season)
+	latest_event = GetSeriesLatestEvent(players_db, series_name)
+
+	return players_db
+		.filter(x => x.series_name == series_name)
 		.sort((a,b) => b.rank_score - a.rank_score)
-		.map(x => {x.recent_change = GetChangeFromLastWeek(x); return x})
+		.map(x => {x.recent_change = GetChangeFromLastWeek(x, latest_event); return x})
 		.map(x => {x.score_lastweek = x.rank_score - x.recent_change; return x})
 		.sort((a,b) => b.score_lastweek - a.score_lastweek)
 		.map((x, i) => {x.rank_lastweek = i; return x;})
 		.sort((a,b) => b.rank_score - a.rank_score);
 }
 
-function GetChangeFromLastWeek(player) {
+function GetSeriesLatestEvent(players_db, series_name) {
+	return players_db
+		.filter(x => x.series_name == series_name)
+		.map(x => Object.keys(x.events))
+		.map(x => parseInt(x.reverse()[0]))
+		.reduce((prev, cur) => cur > prev ? cur : prev, 0)
+}
+
+function GetChangeFromLastWeek(player, latest_event) {
 
 	let events = Object.values(player.events).reverse()
 
@@ -72,7 +72,7 @@ function GetChangeFromLastWeek(player) {
 	let players_latest_event = parseInt(Object.keys(player.events).reverse());
 	
 	if (events.length == 1 && players_latest_event == latest_event)
-		return 9999;
+		return NEW_PLAYER;
 	
 	let change = latest_event == players_latest_event && events.length > 1
 		? events[0].rank_score - events[1].rank_score

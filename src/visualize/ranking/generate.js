@@ -5,7 +5,7 @@ const { DrawRanking } = require("./ranking");
 
 var document;
 
-exports.GenerateHTML = function (events, season) {
+exports.GenerateHTML = function (players_db, series_name) {
 
 	var new_dom = (new JSDOM(GetHeaders()));
 	document = new_dom.window.document;
@@ -13,7 +13,7 @@ exports.GenerateHTML = function (events, season) {
 	let content = DrawContentDiv()
 	//content.appendChild(DrawEventSelector(events_by_series))
 	content.appendChild(DrawTitle())
-	content.appendChild(DrawRanking(events, season))
+	content.appendChild(DrawRanking(players_db, series_name))
 
 	document.body.appendChild(content)
 
