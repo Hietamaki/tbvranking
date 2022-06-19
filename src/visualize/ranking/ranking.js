@@ -23,7 +23,7 @@ function DrawRankingTable(players_db, series_name) {
 		let rank_score = players_db[i].rank_score
 		let rank_lastweek = StylizeRankChange(players_db[i].rank_lastweek - i, players_db[i].recent_change == NEW_PLAYER);
 		let events = Object.values(players_db[i].events).reverse()
-		let osallistumisia = events.filter(x => x.series_name == series_name).length
+		let osallistumisia = events.filter(x => x.season == series_name).length
 
         toplist += `
 			<tr class="riser">
@@ -45,7 +45,7 @@ function SortPlayersByRankAndMapRankInfo(players_db, series_name) {
 	latest_event = GetSeriesLatestEvent(players_db, series_name)
 
 	return players_db
-		.filter(x => x.series_name == series_name)
+		.filter(x => x.season == series_name)
 		.sort((a,b) => b.rank_score - a.rank_score)
 		.map(x => {x.recent_change = GetChangeFromLastWeek(x, latest_event); return x})
 		.map(x => {x.score_lastweek = x.rank_score - x.recent_change; return x})
@@ -56,7 +56,7 @@ function SortPlayersByRankAndMapRankInfo(players_db, series_name) {
 
 function GetSeriesLatestEvent(players_db, series_name) {
 	return players_db
-		.filter(x => x.series_name == series_name)
+		.filter(x => x.season == series_name)
 		.map(x => Object.keys(x.events))
 		.map(x => parseInt(x.reverse()[0]))
 		.reduce((prev, cur) => cur > prev ? cur : prev, 0)
