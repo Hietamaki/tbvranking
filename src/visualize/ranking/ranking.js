@@ -19,7 +19,8 @@ function DrawRankingTable(players_db, series_name) {
 	toplist += "<tr><th>Sija</th><th>Kisaaja</th><th>Muutos</th><th>Kerrat</th><th>Pisteet</th></tr>";
 
     for (let i = 0; i < players_db.length; i++) {
-		let is_new_player = players_db[i].total_events == Object.keys(players_db[i].events).length;
+		let is_new_player = players_db[i].total_events == 1 
+			&& players_db[i].total_events == Object.keys(players_db[i].events).length;
 		let is_season_first = players_db[i].rank_lastweek == NEW_PLAYER;
 
 		let name = players_db[i].name
@@ -55,6 +56,7 @@ function MapLastWeekPosition(players_db, series_name) {
 		.map(x => {x.rank_lastweek = GetLastWeekRank(x, latest_event); return x})
 		.sort((a,b) => b.rank_lastweek - a.rank_lastweek)
 		.map((x, i) => {x.position_lastweek = i; return x;})
+		.map(x => {x.rank_score = x.events[Object.keys(x.events).reverse()[0]].rank_score; return x;})
 		.sort((a,b) => b.rank_score - a.rank_score)
 }
 
