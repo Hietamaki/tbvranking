@@ -16,7 +16,7 @@ function DrawRankingTable(players_db, series_name) {
 	players_db = MapLastWeekPosition(players_db, series_name);
 
     var toplist = "<table>";
-	toplist += "<tr><th>Sija</th><th>Kisaaja</th><th>Muutos</th><th>Kerrat</th><th>Pisteet</th></tr>";
+	toplist += "<tr><th>Sija</th><th>Kisaaja</th><th>Muutos</th><th>Osallistunut</th><th>Pisteet</th></tr>";
 
     for (let i = 0; i < players_db.length; i++) {
 		let player = players_db[i];
@@ -40,7 +40,7 @@ function DrawRankingTable(players_db, series_name) {
 				<td>${i+1}.</td>
 				<td><a href="p/${name}.html">${is_season_first && is_new_player ? name+" 🌱" : name}</a></td>
 				<td>${position_lastweek}</td>
-				<td>${osallistumisia}</td>
+				<td>${parseInt(osallistumisia / GetAllEvents(players_db).length * 100)} %</td>
 				<td>${rank_score}</td>
 			</tr>`;
     }
@@ -50,6 +50,10 @@ function DrawRankingTable(players_db, series_name) {
 	return `<div class="rankinglist">${toplist}</div>`;
 }
 
+function GetAllEvents(players_db) {
+	return players_db.flatMap(p => Object.keys(p.series_events))
+		.filter((v, i, s) => s.indexOf(v) === i)
+}
 function MapLastWeekPosition(players_db, series_name) {
 
 	latest_event = GetSeriesLatestEvent(players_db, series_name)
