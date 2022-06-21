@@ -19,24 +19,26 @@ function DrawRankingTable(players_db, series_name) {
 	toplist += "<tr><th>Sija</th><th>Kisaaja</th><th>Muutos</th><th>Kerrat</th><th>Pisteet</th></tr>";
 
     for (let i = 0; i < players_db.length; i++) {
-		let is_new_player = players_db[i].total_events == 1 
-			&& players_db[i].total_events == Object.keys(players_db[i].events).length;
-		let is_season_first = players_db[i].rank_lastweek == NEW_PLAYER;
+		let player = players_db[i];
 
-		let name = players_db[i].name
-		let rank_score = players_db[i].rank_score
+		let is_new_player = Object.keys(player.events).filter(e => parseInt(e) <= GetSeriesLatestEvent(players_db)).length == 1
+			&& Object.keys(player.events)[0] == GetSeriesLatestEvent(players_db)
+		let is_season_first = player.rank_lastweek == NEW_PLAYER;
+
+		let name = player.name
+		let rank_score = player.rank_score
 		let position_lastweek = StylizeRankChange(
-			players_db[i].position_lastweek - i,
+			player.position_lastweek - i,
 			is_season_first,
 			is_new_player,
 			);
-		let events = Object.values(players_db[i].events).reverse()
+		let events = Object.values(player.series_events).reverse()
 		let osallistumisia = events.length
 
         toplist += `
 			<tr class="riser">
 				<td>${i+1}.</td>
-				<td><a href="p/${name}.html">${is_new_player == true ? name+" 🌱" : name}</a></td>
+				<td><a href="p/${name}.html">${is_season_first && is_new_player ? name+" 🌱" : name}</a></td>
 				<td>${position_lastweek}</td>
 				<td>${osallistumisia}</td>
 				<td>${rank_score}</td>
@@ -56,31 +58,31 @@ function MapLastWeekPosition(players_db, series_name) {
 		.map(x => {x.rank_lastweek = GetLastWeekRank(x, latest_event); return x})
 		.sort((a,b) => b.rank_lastweek - a.rank_lastweek)
 		.map((x, i) => {x.position_lastweek = i; return x;})
-		.map(x => {x.rank_score = x.events[Object.keys(x.events).reverse()[0]].rank_score; return x;})
+		.map(x => {x.rank_score = x.series_events[Object.keys(x.series_events).reverse()[0]].rank_score; return x;})
 		.sort((a,b) => b.rank_score - a.rank_score)
 }
 
 function GetSeriesLatestEvent(players_db) {
 	return players_db
-		.map(x => Object.keys(x.events))
+		.map(x => Object.keys(x.series_events))
 		.map(x => parseInt(x.reverse()[0]))
 		.reduce((prev, cur) => cur > prev ? cur : prev, 0)
 }
 
 function GetLastWeekRank(player, latest_event) {
 
-	let event_ids = Object.keys(player.events).reverse();
+	let event_ids = Object.keys(player.series_events).reverse();
 
 	let players_latest_event = event_ids[0];
-	
-	if (players_latest_event != latest_event)
-		return player.events[event_ids[0]].rank_score;
 
 	if (event_ids.length == 1)
 		return NEW_PLAYER;
 	
+	if (players_latest_event != latest_event)
+		return player.series_events[event_ids[0]].rank_score;
+	
 	return event_ids.length > 1
-		? player.events[event_ids[1]].rank_score
+		? player.series_events[event_ids[1]].rank_score
 		: 0
 }
 

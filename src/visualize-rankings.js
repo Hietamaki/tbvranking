@@ -25,10 +25,10 @@ pdb.find({}, function(err, players_db) {
 
 			// add total event amount (should be in transform)
 			p.total_events = Object.keys(p.events).length;
-			p.events = Object.fromEntries(
+			p.series_events = Object.fromEntries(
 				Object.entries(p.events).filter(([key, value]) => value.season === series_name)) 
 			})
-		series_players = series_players.filter(p => Object.keys(p.events).length > 0)
+		series_players = series_players.filter(p => Object.keys(p.series_events).length > 0)
 
 		fs.writeFile("html/"+series_name+".html", GenerateHTML(series_players, series_name), (err) => {
 		    if (err)
