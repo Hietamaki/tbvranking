@@ -52,7 +52,7 @@ function DrawContentDiv() {
 }
 
 function DrawTitle(event) {
-	let season = event.tags[0].slice(0, 7).trim();
+	let season = event.tags.reverse()[0].slice(0, 7).trim();
 
 	let title = document.createElement("h1")
 	title.innerHTML = `<a href="${season}.html">${season}</a> – ${event.date}`

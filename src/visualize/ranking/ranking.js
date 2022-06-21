@@ -75,12 +75,13 @@ function GetLastWeekRank(player, latest_event) {
 
 	let players_latest_event = event_ids[0];
 
-	if (event_ids.length == 1)
-		return NEW_PLAYER;
 	
 	if (players_latest_event != latest_event)
 		return player.series_events[event_ids[0]].rank_score;
 	
+	if (event_ids.length == 1)
+		return NEW_PLAYER;
+
 	return event_ids.length > 1
 		? player.series_events[event_ids[1]].rank_score
 		: 0
