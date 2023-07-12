@@ -17,10 +17,14 @@ fs.readdir("cache/events/", (err, files) => {
 		var record = CreateEventFromIndexDOM(event_id);
 		var starting_rankings = GetPlayerInfoFromGroupsDOM(event_id);
 
-		for (let dom_group of GetGroupsFromResultsDOM(event_id))
-			record.groups.push(CreateGroupFromDOM(dom_group, starting_rankings, record));
+		for (let dom_group of GetGroupsFromResultsDOM(event_id)) {
+			const group_record = CreateGroupFromDOM(dom_group, starting_rankings, record);
+			record.groups.push(group_record);
+		}
 		
-		if (record.groups.some(group => group.scores.some(game => game !== ""))) {
+		const no_empty_scores = record.groups.some(group => group.scores.some(game => game !== ""));
+		
+		if (no_empty_scores) {
 			console.log("Adding event to database: "+file)
 
 			edb.update({id: event_id}, record, {upsert: true}, (error, replaced) => {
@@ -53,6 +57,10 @@ function CreateGroupFromDOM(dom_group, starting_rankings, event) {
 	for (let dom_player of dom_group) {
 		
 		var player = CreatePlayerObject(dom_player, starting_rankings);
+
+		if (!player)
+			continue;
+
 		group.players.push(player);
 
 		// Saving round scores from first player perspective 1-4, 1-3, 1-2
@@ -86,7 +94,10 @@ function CreateGroupFromDOM(dom_group, starting_rankings, event) {
 
 function CreatePlayerObject( dom_player, starting_rankings ) {
 
-	const name = dom_player.querySelector(".username").innerHTML
+	const name = dom_player.querySelector(".username")?.innerHTML;
+
+	if (!name)
+		return null;
 
 	return {
 		name: name,
