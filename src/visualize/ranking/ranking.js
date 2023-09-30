@@ -13,7 +13,8 @@ exports.DrawRanking = function (players_db, series_name) {
 
 function DrawRankingTable(players_db, series_name) {
 
-	players_db = MapLastWeekPosition(players_db, series_name);
+	players_db = EnrichPlayersData(players_db, series_name);
+	players_db = SortPlayersByRank(players_db);
 
     var toplist = "<table>";
 	toplist += "<tr><th>Sija</th><th>Kisaaja</th><th>Muutos</th><th>Osallistunut</th><th>Pisteet</th></tr>";
@@ -54,7 +55,16 @@ function GetAllEvents(players_db) {
 	return players_db.flatMap(p => Object.keys(p.series_events))
 		.filter((v, i, s) => s.indexOf(v) === i)
 }
-function MapLastWeekPosition(players_db, series_name) {
+
+/*
+	Enrich the players_db with:
+		player.rank_lastweek
+		player.position_lastweek
+		player.rank_score
+	
+	Sorts the array as side effect
+*/
+function EnrichPlayersData(players_db, series_name) {
 
 	latest_event = GetSeriesLatestEvent(players_db, series_name)
 
@@ -62,7 +72,15 @@ function MapLastWeekPosition(players_db, series_name) {
 		.map(x => {x.rank_lastweek = GetLastWeekRank(x, latest_event); return x})
 		.sort((a,b) => b.rank_lastweek - a.rank_lastweek)
 		.map((x, i) => {x.position_lastweek = i; return x;})
-		.map(x => {x.rank_score = x.series_events[Object.keys(x.series_events).reverse()[0]].rank_score; return x;})
+		.map(x => {
+			const latestEventKey = Object.keys(x.series_events).reverse()[0];
+			x.rank_score = x.series_events[latestEventKey].rank_score;
+			return x;})
+}
+
+function SortPlayersByRank(players_db) {
+	return players_db
+		.sort((a,b) => a.rank_lastweek - b.rank_lastweek)
 		.sort((a,b) => b.rank_score - a.rank_score)
 }
 
