@@ -1,5 +1,5 @@
 const fs = require("fs");
-const nedb = require("nedb");
+const nedb = require('@seald-io/nedb');
 
 const { GetPlayers } = require("./transform/players");
 const { GetWinners } = require("./transform/winners");

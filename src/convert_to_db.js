@@ -1,6 +1,6 @@
 const jsdom = require('jsdom');
 const fs = require("fs");
-const nedb = require("nedb");
+const nedb = require('@seald-io/nedb');
 
 const edb = new nedb({filename: "db/events.db", autoload: true});
 const pdb = new nedb({filename: "db/players.db", autoload: true});

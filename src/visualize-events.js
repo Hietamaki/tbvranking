@@ -1,5 +1,5 @@
 const fs = require("fs");
-const nedb = require("nedb");
+const nedb = require('@seald-io/nedb');
 const { GenerateHTML } = require("./visualize/events/generate");
 const { ListEventsBySeries } = require("./visualize/util");
 

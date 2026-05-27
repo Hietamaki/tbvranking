@@ -1,5 +1,5 @@
 const fs = require("fs");
-const nedb = require("nedb");
+const nedb = require('@seald-io/nedb');
 const { GenerateHTML } = require("./visualize/players/generate");
 
 const db = new nedb({filename: "db/events.db", autoload: true});
