@@ -150,7 +150,12 @@ function GetGroupsFromResultsDOM(event_id) {
 
 	for (let dom_group of result_table.querySelectorAll("tr")) {
 
-		let group_number = Number(dom_group.querySelector(".views-field-gid").innerHTML)
+		let group_number_element = dom_group.querySelector(".views-field-gid")
+
+		if (!group_number_element)
+			continue;
+
+		let group_number = Number(group_number_element.innerHTML)
 		
 		if (isNaN(group_number))
 			continue;
