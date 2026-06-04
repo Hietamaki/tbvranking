@@ -4,51 +4,42 @@ exports.DrawEventsChart = function (player_events) {
 	
 	let season_data = {};
 	var i=0
-	let dates = []
-	let events = []
-	let points = []
-	let groups = []
 
 	for (let eventname of Object.keys(player_events)) {
 		
 		let event = player_events[eventname];
 
 		if (!season_data[event.season])
-			season_data[event.season] = ""
-
-		season_data[event.season] += "{x: "+(i++)+", y:"+event.event_score+"},"
-		dates.push(event.date)
-		events.push(eventname)
-		points.push(event.points)
-		groups.push(event.group)
+			season_data[event.season] = [];
+		
+		season_data[event.season].push({
+			x: i++,
+			y: event.event_score,
+			event_name: eventname,
+			event: event
+		});
 	}
 
 	var colors = ["red", "blue", "orange", "green", "purple", "yellow"]
-	let label = "",
-		dataset = "",
+	let datasets = [],
 		k = 0;
+	const entries = Object.entries(season_data);
+	const startVisibleFrom = entries.length - 5;
 
-	for (season of Object.entries(season_data)) {
+	for (season of entries) {
 		let color = colors[k++ % colors.length];
-		dataset += `{
-			label: '${season[0]}',
-			backgroundColor: '${color}',
-			borderColor: '${color}',
-			data: [${season[1]}],
+		datasets.push({
+			label: season[0],
+			backgroundColor: color,
+			borderColor: color,
+			data: season[1],
 			fill: false,
 			showLine: true,
-		},`
-
-		label += season[1]
+			hidden: k <= startVisibleFrom
+		})
 	}
 
-	const html = nunjucks.render("players/eventschart.njk", {
-		dataset,
-		events,
-		groups,
-		points,
-		dates
-	  });
+	const html = nunjucks.render("players/eventschart.njk", {datasets});
 
 	return html;
 }
