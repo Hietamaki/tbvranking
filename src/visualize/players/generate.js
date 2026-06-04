@@ -5,6 +5,9 @@ const { DrawGroupsMeanChart } = require("./groupsmeanchart");
 const { DrawRank } = require("./rank");
 const { DrawInfoBox } = require("./infobox");
 const { JSDOM } = require('jsdom');
+const nunjucks = require("nunjucks");
+
+nunjucks.configure("./src/visualize/");
 
 exports.GenerateHTML = function (player) {
 
